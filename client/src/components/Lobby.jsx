@@ -1,0 +1,154 @@
+import { useState } from 'react';
+import { motion } from 'motion/react';
+import { Crown, Users, Bot, Trash2, Play, Copy, Check, Sparkles } from 'lucide-react';
+import socket from '../socket';
+
+export default function Lobby({ roomCode, players, isHost, onStartGame, error }) {
+  const [copied, setCopied] = useState(false);
+
+  const copyCode = () => {
+    navigator.clipboard.writeText(roomCode);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const addBot = () => socket.emit('add-bot', roomCode);
+  const removeBot = (id) => socket.emit('remove-bot', { roomCode, botId: id });
+  const botCount = players.filter((p) => p.isBot).length;
+  const canStart = players.length >= 3;
+
+  const colors = ['#f5576c','#f093fb','#fda085','#38ef7d','#667eea','#00d2ff','#a18cd1','#fbc2eb','#ff6b6b','#48dbfb','#feca57','#ff9ff3','#54a0ff','#5f27cd','#01a3a4','#f368e0','#ee5a24','#6ab04c','#4834d4','#eb4d4b'];
+
+  return (
+    <div className="min-h-screen flex items-center justify-center p-6 bg-game">
+      <div className="w-full max-w-[500px]">
+        {/* Room Code */}
+        <motion.div initial={{ y: -30, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="text-center mb-8">
+          <p className="text-white/40 text-sm uppercase tracking-widest mb-2">Ruumi kood</p>
+          <motion.button
+            onClick={copyCode}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl transition-all"
+            style={{
+              background: 'linear-gradient(135deg, rgba(245,87,108,0.15), rgba(240,147,251,0.15))',
+              backdropFilter: 'blur(12px)',
+              border: '2px solid rgba(240,147,251,0.4)',
+              boxShadow: '0 8px 32px rgba(240,147,251,0.3)',
+            }}
+          >
+            <span className="text-4xl font-black tracking-[0.3em]" style={{
+              background: 'linear-gradient(135deg, #f5576c 0%, #f093fb 50%, #fda085 100%)',
+              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
+            }}>{roomCode}</span>
+            {copied ? <Check className="w-6 h-6 text-[#38ef7d]" /> : <Copy className="w-6 h-6 text-white/60" />}
+          </motion.button>
+          <p className="text-white/40 text-xs mt-2">{copied ? 'Kopeeritud!' : 'Kliki kopeerimiseks'}</p>
+        </motion.div>
+
+        {/* Player List */}
+        <motion.div
+          initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }}
+          className="glass rounded-3xl p-6 mb-6"
+        >
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <Users className="w-5 h-5 text-[#f093fb]" />
+              <h2 className="text-lg font-bold text-white">Mängijad</h2>
+            </div>
+            <span className="text-sm font-bold px-3 py-1 rounded-full"
+              style={{ background: 'rgba(240,147,251,0.2)', color: '#f093fb' }}
+            >{players.length}/20</span>
+          </div>
+
+          <div className="space-y-2 max-h-[320px] overflow-y-auto pr-1">
+            {players.map((p, i) => (
+              <motion.div
+                key={p.id}
+                initial={{ x: -20, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ delay: i * 0.05 }}
+                className="flex items-center justify-between px-4 py-3 rounded-xl transition-all"
+                style={{
+                  background: 'rgba(255,255,255,0.05)',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                }}
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold"
+                    style={{ background: colors[i % colors.length] + '33', color: colors[i % colors.length] }}
+                  >
+                    {p.isBot ? <Bot className="w-4 h-4" /> : p.name?.[0]?.toUpperCase()}
+                  </div>
+                  <span className="font-bold text-white">{p.name}</span>
+                  {p.isHost && <Crown className="w-4 h-4 text-[#fda085]" />}
+                  {p.isBot && <span className="text-[10px] px-2 py-0.5 rounded-full font-bold" style={{ background: 'rgba(56,239,125,0.15)', color: '#38ef7d' }}>BOT</span>}
+                </div>
+                {isHost && p.isBot && (
+                  <button onClick={() => removeBot(p.id)} className="p-1.5 rounded-lg transition-all hover:bg-red-500/20">
+                    <Trash2 className="w-4 h-4 text-red-400" />
+                  </button>
+                )}
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Host Controls */}
+        {isHost && (
+          <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }} className="space-y-3">
+            {players.length < 20 && (
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={addBot}
+                className="w-full min-h-[48px] px-6 py-3 rounded-2xl font-bold text-white transition-all flex items-center justify-center gap-2"
+                style={{
+                  background: 'rgba(255,255,255,0.08)',
+                  border: '1px solid rgba(255,255,255,0.15)',
+                  backdropFilter: 'blur(12px)',
+                }}
+              >
+                <Bot className="w-5 h-5 text-[#38ef7d]" /> Lisa bot
+              </motion.button>
+            )}
+
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={onStartGame}
+              disabled={!canStart}
+              className="w-full min-h-[56px] px-8 py-4 rounded-2xl font-black text-xl uppercase tracking-wide text-white transition-all disabled:opacity-40 relative overflow-hidden"
+              style={{
+                background: canStart ? 'linear-gradient(135deg, #f5576c 0%, #f093fb 50%, #fda085 100%)' : 'rgba(255,255,255,0.1)',
+                boxShadow: canStart ? '0 10px 40px rgba(245,87,108,0.4)' : 'none',
+                border: '2px solid rgba(255,255,255,0.2)',
+              }}
+            >
+              {canStart && <div className="absolute inset-0 shimmer" />}
+              <span className="relative z-10 flex items-center justify-center gap-2">
+                <Play className="w-6 h-6" /> Alusta mängu!
+              </span>
+            </motion.button>
+            {!canStart && <p className="text-center text-white/40 text-xs">Vaja vähemalt 3 mängijat</p>}
+          </motion.div>
+        )}
+
+        {!isHost && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="text-center">
+            <div className="flex items-center justify-center gap-2">
+              <Sparkles className="w-5 h-5 text-[#fda085] animate-pulse" />
+              <p className="text-white/60 font-bold">Ootame, kuni host alustab mängu...</p>
+            </div>
+          </motion.div>
+        )}
+
+        {error && (
+          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center text-red-400 text-sm mt-4 glass rounded-xl p-3">
+            {error}
+          </motion.p>
+        )}
+      </div>
+    </div>
+  );
+}
