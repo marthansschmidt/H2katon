@@ -164,7 +164,7 @@ function startRound1(roomCode) {
   room.currentSubRound = 1;
   room.totalSubRounds = 2;
   emitState(roomCode);
-  setTimeout(function() { startR1Prompt(roomCode); }, 3000);
+  setTimeout(function() { startR1Prompt(roomCode); }, 5000);
 }
 
 function startR1Prompt(roomCode) {
@@ -180,7 +180,7 @@ function startR1Prompt(roomCode) {
   room.roundPhase = 'prompt';
   room.expectedAnswers = room.players.length;
   emitState(roomCode);
-  startTimer(roomCode, 20, function() { r1MoveToReveal(roomCode); });
+  startTimer(roomCode, 30, function() { r1MoveToReveal(roomCode); });
   scheduleBotAnswers(roomCode);
 }
 
@@ -199,7 +199,7 @@ function r1MoveToVote(roomCode) {
   room.roundPhase = 'vote';
   room.expectedVoters = room.players.length;
   emitState(roomCode);
-  startTimer(roomCode, 20, function() { r1FinishVoting(roomCode); });
+  startTimer(roomCode, 15, function() { r1FinishVoting(roomCode); });
   scheduleBotVotes(roomCode, room.players);
 }
 
@@ -236,7 +236,7 @@ function startRound2(roomCode) {
   room.totalSubRounds = Math.min(3, Math.max(2, Math.floor(room.players.length / 2) + 1));
   room.usedBattlePairs = [];
   emitState(roomCode);
-  setTimeout(function() { startR2Battle(roomCode); }, 3000);
+  setTimeout(function() { startR2Battle(roomCode); }, 5000);
 }
 
 function startR2Battle(roomCode) {
@@ -259,7 +259,7 @@ function startR2Battle(roomCode) {
   room.roundPhase = 'prompt';
   room.expectedAnswers = 2;
   emitState(roomCode);
-  startTimer(roomCode, 20, function() { r2MoveToReveal(roomCode); });
+  startTimer(roomCode, 30, function() { r2MoveToReveal(roomCode); });
   var battleBots = room.players.filter(function(p) {
     return p.isBot && pair.some(function(bp) { return bp.id === p.id; });
   });
@@ -293,7 +293,7 @@ function r2MoveToVote(roomCode) {
   });
   room.expectedVoters = voters.length;
   emitState(roomCode);
-  startTimer(roomCode, 20, function() { r2FinishVoting(roomCode); });
+  startTimer(roomCode, 15, function() { r2FinishVoting(roomCode); });
   voters.filter(function(p) { return p.isBot; }).forEach(function(bot) {
     var delay = 1000 + Math.random() * 3000;
     setTimeout(function() {
@@ -336,7 +336,7 @@ function startRound3(roomCode) {
   room.currentSubRound = 1;
   room.totalSubRounds = 1;
   emitState(roomCode);
-  setTimeout(function() { startR3Prompt(roomCode); }, 3000);
+  setTimeout(function() { startR3Prompt(roomCode); }, 5000);
 }
 
 function startR3Prompt(roomCode) {
@@ -353,7 +353,7 @@ function startR3Prompt(roomCode) {
   room.expectedAnswers = room.players.length;
   room.battlePlayers = [];
   emitState(roomCode);
-  startTimer(roomCode, 20, function() { r3MoveToReveal(roomCode); });
+  startTimer(roomCode, 30, function() { r3MoveToReveal(roomCode); });
   scheduleBotAnswers(roomCode);
 }
 
@@ -372,7 +372,7 @@ function r3MoveToMedalVote(roomCode) {
   room.roundPhase = 'vote';
   room.expectedVoters = room.players.length;
   emitState(roomCode);
-  startTimer(roomCode, 20, function() { r3FinishMedalVote(roomCode); });
+  startTimer(roomCode, 15, function() { r3FinishMedalVote(roomCode); });
   room.players.filter(function(p) { return p.isBot; }).forEach(function(bot) {
     var delay = 2000 + Math.random() * 4000;
     setTimeout(function() {

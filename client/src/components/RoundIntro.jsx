@@ -5,19 +5,17 @@ const data = {
 };
 
 import MagicRings from './MagicRings';
-import ClickSpark from './ClickSpark';
 
 export default function RoundIntro({ currentRound }) {
   const r = data[currentRound] || data[1];
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-4 gap-4 animate-bounce-in relative overflow-hidden">
-      <ClickSpark />
+    <div className="min-h-screen flex flex-col items-center justify-center px-4 gap-6 animate-bounce-in relative overflow-hidden">
       <MagicRings />
-      <div className="relative z-10">
-        <span className="text-6xl">{r.emoji}</span>
-        <h1 className="text-3xl font-black text-gradient">{r.name}</h1>
-        <p className="text-muted-foreground text-center max-w-xs">{r.desc}</p>
-        <p className="text-sm text-muted-foreground animate-pulse mt-2">Algab kohe...</p>
+      <div className="relative z-10 flex flex-col items-center justify-center gap-4">
+        <span className="text-8xl sm:text-9xl">{r.emoji}</span>
+        <h1 className="text-4xl sm:text-6xl md:text-7xl font-black text-gradient text-center">{r.name}</h1>
+        <p className="text-muted-foreground text-center max-w-sm sm:max-w-md text-base sm:text-lg">{r.desc}</p>
+        <p className="text-sm sm:text-base text-muted-foreground animate-pulse mt-4">Algab kohe...</p>
       </div>
     </div>
   );
