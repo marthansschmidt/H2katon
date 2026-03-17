@@ -49,7 +49,6 @@ export default function ScoresPhase({ players, answers, currentRound, currentSub
           <motion.div initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="text-center mb-8">
             <Star className="w-10 h-10 text-[#fda085] mx-auto mb-2" />
             <h1 className="text-3xl font-black text-gradient">{isMedalRound ? 'Medalid' : 'Tulemused'}</h1>
-            <p className="text-white/40 text-sm mt-1">Voor {currentRound} - Osa {currentSubRound}/{totalSubRounds}</p>
           </motion.div>
 
           <div className="space-y-4 mb-6">
@@ -124,7 +123,6 @@ export default function ScoresPhase({ players, answers, currentRound, currentSub
         <motion.div initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="text-center mb-8">
           <TrendingUp className="w-10 h-10 text-[#f093fb] mx-auto mb-2" />
           <h1 className="text-3xl font-black text-gradient">Punktitabel</h1>
-          <p className="text-white/40 text-sm mt-1">Pärast vooru {currentRound}</p>
         </motion.div>
 
         <div className="space-y-3">

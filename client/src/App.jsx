@@ -98,10 +98,8 @@ export default function App() {
         onSubmitAnswer={handleSubmitAnswer} battlePlayers={gameState.battlePlayers} playerId={playerId} />
     );
 
-  if (rp === 'reveal')
-    return <RevealPhase answers={gameState.answers} currentRound={gameState.currentRound} battlePlayers={gameState.battlePlayers} />;
-
-  if (rp === 'vote')
+  // Skip reveal phase, go directly to voting
+  if (rp === 'reveal' || rp === 'vote')
     return (
       <VotePhase answers={gameState.answers} playerId={playerId} timer={timer}
         votedCount={gameState.votedCount} expectedVoters={gameState.expectedVoters}

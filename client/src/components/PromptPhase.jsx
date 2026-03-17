@@ -20,9 +20,6 @@ export default function PromptPhase({ prompt, currentRound, currentSubRound, tot
       <div className="w-full max-w-[600px]">
         {/* Header */}
         <motion.div initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="text-center mb-6">
-          <p className="text-white/40 text-xs uppercase tracking-widest mb-2">
-            Voor {currentRound} / 3{totalSubRounds > 1 ? ` \u2022 Osa ${currentSubRound} / ${totalSubRounds}` : ''}
-          </p>
           <motion.div
             animate={isLowTime ? { scale: [1, 1.15, 1] } : {}}
             transition={{ duration: 0.5, repeat: isLowTime ? Infinity : 0 }}

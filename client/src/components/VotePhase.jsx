@@ -33,6 +33,9 @@ export default function VotePhase({ answers, playerId, timer, votedCount, expect
 
   const timerColor = isLowTime ? 'text-[#d4183d]' : 'text-[#f093fb]';
 
+  // Filter out user's own answer
+  const filteredAnswers = answers.filter(a => a.playerId !== playerId);
+
   // Battle player waiting screen
   if (isBattlePlayer) {
     return (
@@ -80,8 +83,7 @@ export default function VotePhase({ answers, playerId, timer, votedCount, expect
             <>
               <p className="text-white/40 text-xs text-center mb-4">Määra medalid parimatele vastustele</p>
               <div className="space-y-4 mb-6">
-                {answers.map((a, i) => {
-                  const isOwn = a.playerId === playerId;
+                {filteredAnswers.map((a, i) => {
                   const assigned = medalChoices[a.playerId] || null;
                   return (
                     <motion.div
@@ -95,28 +97,24 @@ export default function VotePhase({ answers, playerId, timer, votedCount, expect
                         backdropFilter: 'blur(12px)',
                         border: assigned ? '2px solid rgba(240,147,251,0.5)' : '1px solid rgba(255,255,255,0.1)',
                         boxShadow: assigned ? '0 8px 32px rgba(240,147,251,0.3)' : '0 8px 32px rgba(0,0,0,0.37)',
-                        opacity: isOwn ? 0.5 : 1,
                       }}
                     >
                       <p className="text-lg font-bold text-white mb-1">{a.text}</p>
-                      {isOwn && <span className="text-xs text-white/40">(sinu vastus)</span>}
-                      {!isOwn && (
-                        <div className="flex gap-2 mt-2">
-                          {medals.map(([key, emoji, label]) => (
-                            <button key={key} onClick={() => handleMedalClick(a.playerId, key)}
-                              className="px-4 py-2 rounded-xl text-sm font-bold transition-all"
-                              style={{
-                                background: assigned === key ? 'linear-gradient(135deg, #f5576c, #f093fb)' : 'rgba(255,255,255,0.08)',
-                                border: assigned === key ? '2px solid rgba(240,147,251,0.6)' : '1px solid rgba(255,255,255,0.1)',
-                                color: 'white',
-                                transform: assigned === key ? 'scale(1.05)' : 'scale(1)',
-                              }}
-                            >
-                              {emoji} {label}
-                            </button>
-                          ))}
-                        </div>
-                      )}
+                      <div className="flex gap-2 mt-2">
+                        {medals.map(([key, emoji, label]) => (
+                          <button key={key} onClick={() => handleMedalClick(a.playerId, key)}
+                            className="px-4 py-2 rounded-xl text-sm font-bold transition-all"
+                            style={{
+                              background: assigned === key ? 'linear-gradient(135deg, #f5576c, #f093fb)' : 'rgba(255,255,255,0.08)',
+                              border: assigned === key ? '2px solid rgba(240,147,251,0.6)' : '1px solid rgba(255,255,255,0.1)',
+                              color: 'white',
+                              transform: assigned === key ? 'scale(1.05)' : 'scale(1)',
+                            }}
+                          >
+                            {emoji} {label}
+                          </button>
+                        ))}
+                      </div>
                     </motion.div>
                   );
                 })}
@@ -171,8 +169,7 @@ export default function VotePhase({ answers, playerId, timer, votedCount, expect
 
         {/* Voting Cards */}
         <div className="space-y-6 mb-8">
-          {answers.map((a, index) => {
-            const isOwn = a.playerId === playerId;
+          {filteredAnswers.map((a, index) => {
             const isSelected = a.playerId === selectedId;
             const isOtherSelected = hasVoted && a.playerId !== selectedId;
 
@@ -182,11 +179,11 @@ export default function VotePhase({ answers, playerId, timer, votedCount, expect
                 initial={{ x: index % 2 === 0 ? -50 : 50, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ delay: index * 0.2 }}
-                whileHover={!hasVoted && !isOwn ? { y: -8 } : {}}
+                whileHover={!hasVoted ? { y: -8 } : {}}
               >
                 <button
                   onClick={() => handleVote(a.playerId)}
-                  disabled={isOwn || hasVoted}
+                  disabled={hasVoted}
                   className="w-full p-6 rounded-3xl text-left transition-all relative overflow-hidden group disabled:cursor-default"
                   style={{
                     background: isSelected
@@ -199,12 +196,12 @@ export default function VotePhase({ answers, playerId, timer, votedCount, expect
                     boxShadow: isSelected
                       ? '0 8px 32px 0 rgba(240,147,251,0.4), 0 0 40px rgba(245,87,108,0.2)'
                       : '0 8px 32px 0 rgba(0,0,0,0.37)',
-                    opacity: isOtherSelected ? 0.5 : isOwn ? 0.4 : 1,
+                    opacity: isOtherSelected ? 0.5 : 1,
                     transform: isSelected ? 'scale(1.02)' : isOtherSelected ? 'scale(0.98)' : 'scale(1)',
                   }}
                 >
                   {/* Hover glow */}
-                  {!hasVoted && !isOwn && (
+                  {!hasVoted && (
                     <div
                       className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity rounded-3xl"
                       style={{ background: 'radial-gradient(circle at 50% 50%, rgba(240,147,251,0.15), transparent 70%)' }}
@@ -231,22 +228,19 @@ export default function VotePhase({ answers, playerId, timer, votedCount, expect
                     <p className="text-2xl font-bold mb-4" style={{ color: isSelected ? '#ffffff' : '#e0e0e0' }}>
                       {a.text}
                     </p>
-                    {isOwn && <span className="text-xs text-white/40">(sinu vastus)</span>}
-                    {!isOwn && (
-                      <div className="flex items-center gap-2">
-                        <div
-                          className="px-4 py-2 rounded-xl flex items-center gap-2 transition-all"
-                          style={{
-                            background: isSelected ? 'linear-gradient(135deg, #f5576c, #f093fb)' : 'rgba(255,255,255,0.1)',
-                          }}
-                        >
-                          <ThumbsUp className={`w-4 h-4 ${isSelected ? 'text-white' : 'text-[#f093fb]'}`} />
-                          <span className={`text-sm font-bold ${isSelected ? 'text-white' : 'text-white/60'}`}>
-                            {isSelected ? 'Valitud!' : 'Hääleta'}
-                          </span>
-                        </div>
+                    <div className="flex items-center gap-2">
+                      <div
+                        className="px-4 py-2 rounded-xl flex items-center gap-2 transition-all"
+                        style={{
+                          background: isSelected ? 'linear-gradient(135deg, #f5576c, #f093fb)' : 'rgba(255,255,255,0.1)',
+                        }}
+                      >
+                        <ThumbsUp className={`w-4 h-4 ${isSelected ? 'text-white' : 'text-[#f093fb]'}`} />
+                        <span className={`text-sm font-bold ${isSelected ? 'text-white' : 'text-white/60'}`}>
+                          {isSelected ? 'Valitud!' : 'Hääleta'}
+                        </span>
                       </div>
-                    )}
+                    </div>
                   </div>
                 </button>
               </motion.div>
