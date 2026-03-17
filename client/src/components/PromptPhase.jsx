@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { Send, Swords, Eye, Sparkles } from 'lucide-react';
+import MagicRings from './MagicRings';
 
 export default function PromptPhase({ prompt, currentRound, currentSubRound, totalSubRounds, timer, answeredCount, expectedAnswers, onSubmitAnswer, battlePlayers, playerId }) {
   const [answer, setAnswer] = useState('');
@@ -16,14 +17,20 @@ export default function PromptPhase({ prompt, currentRound, currentSubRound, tot
   const isLowTime = timer <= 10;
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 bg-game">
-      <div className="w-full max-w-[600px]">
+    <div className="min-h-screen flex items-center justify-center p-6 bg-game relative overflow-hidden">
+      <MagicRings />
+      <div className="w-full max-w-[600px] relative z-10">
         {/* Header */}
         <motion.div initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="text-center mb-6">
           <motion.div
             animate={isLowTime ? { scale: [1, 1.15, 1] } : {}}
             transition={{ duration: 0.5, repeat: isLowTime ? Infinity : 0 }}
-            className="inline-block"
+            className="inline-block px-6 py-3 rounded-2xl"
+            style={{
+              border: '2px solid rgba(240,147,251,0.4)',
+              background: 'rgba(255,255,255,0.05)',
+              backdropFilter: 'blur(12px)',
+            }}
           >
             <span className={`text-6xl font-black block ${isLowTime ? 'text-[#d4183d]' : 'text-[#f093fb]'}`}>
               {timer}s

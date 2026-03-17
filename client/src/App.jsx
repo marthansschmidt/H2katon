@@ -68,8 +68,8 @@ export default function App() {
   if (!roomCode || !gameState) {
     if (!isConnected) {
       return (
-        <div className="min-h-screen flex items-center justify-center bg-game">
-          <div className="text-center">
+        <div className="min-h-screen w-full flex items-center justify-center relative overflow-hidden" style={{ background: '#0a0a0c' }}>
+          <div className="text-center relative z-10">
             <p className="text-white text-2xl font-bold mb-2">Ühendamine serveriga...</p>
             <p className="text-white/60 text-sm animate-pulse">[Socket] Backend URL: http://localhost:3001</p>
           </div>
@@ -122,8 +122,8 @@ export default function App() {
     );
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <p className="text-muted-foreground animate-pulse">Laadin...</p>
+    <div className="min-h-screen w-full flex items-center justify-center relative overflow-hidden" style={{ background: '#0a0a0c' }}>
+      <p className="text-white/60 animate-pulse text-lg relative z-10">Laadin...</p>
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'motion/react';
 import { ThumbsUp, Flame, Star, Swords } from 'lucide-react';
+import MagicRings from './MagicRings';
 
 export default function VotePhase({ answers, playerId, timer, votedCount, expectedVoters, onVote, onSubmitMedals, currentRound, battlePlayers }) {
   const [selectedId, setSelectedId] = useState(null);
@@ -39,20 +40,41 @@ export default function VotePhase({ answers, playerId, timer, votedCount, expect
   // Battle player waiting screen
   if (isBattlePlayer) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-6 bg-game">
-        <div className="w-full max-w-[600px] text-center">
-          <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}>
-            <Swords className="w-16 h-16 text-[#fda085] mx-auto mb-4" />
-            <h2 className="text-4xl font-black text-gradient mb-4">Lahing!</h2>
+      <div className="min-h-screen flex items-center justify-center p-6 bg-game relative overflow-hidden">
+        <MagicRings />
+        <div className="w-full max-w-[600px] text-center relative z-10 flex flex-col items-center justify-center">
+          <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="w-full">
+            <Swords className="w-16 h-16 text-[#fda085] mx-auto mb-6" />
+            <h2 className="text-4xl font-black text-gradient mb-6">Lahing!</h2>
             <motion.div
               animate={isLowTime ? { scale: [1, 1.1, 1] } : {}}
               transition={{ duration: 0.5, repeat: isLowTime ? Infinity : 0 }}
-              className="inline-block mb-6"
+              className="inline-block mb-8 w-full px-6 py-3 rounded-2xl"
+              style={{
+                border: '2px solid rgba(240,147,251,0.4)',
+                background: 'rgba(255,255,255,0.05)',
+                backdropFilter: 'blur(12px)',
+              }}
             >
               <span className={`text-6xl font-black block ${timerColor}`}>{timer}s</span>
             </motion.div>
-            <p className="text-white/60 text-sm animate-pulse">Sa osaled lahingus! Oota, kuni teised hääletavad...</p>
-            <p className="text-white/40 text-xs mt-4">Hääletanud: {votedCount} / {expectedVoters}</p>
+            <motion.div className="space-y-6 w-full">
+              <p className="text-white/70 font-bold text-lg">Sa osaled lahingus!</p>
+              <p className="text-white/60 text-base animate-pulse">Oota, kuni teised hääletavad...</p>
+              <motion.div
+                animate={{ scale: [0.95, 1.05, 0.95] }}
+                transition={{ duration: 2, repeat: Infinity }}
+                className="pt-4"
+              >
+                <p className="text-sm font-semibold px-4 py-3 rounded-xl" style={{
+                  background: 'linear-gradient(135deg, rgba(240,147,251,0.2), rgba(245,87,108,0.2))',
+                  border: '1px solid rgba(240,147,251,0.4)',
+                  color: '#f093fb'
+                }}>
+                  Hääletanud: <span className="font-black text-lg">{votedCount} / {expectedVoters}</span>
+                </p>
+              </motion.div>
+            </motion.div>
           </motion.div>
         </div>
       </div>
@@ -63,8 +85,9 @@ export default function VotePhase({ answers, playerId, timer, votedCount, expect
   if (isMedalRound) {
     const medals = [['gold', '\uD83E\uDD47', 'Kuld'], ['silver', '\uD83E\uDD48', 'Hõbe'], ['bronze', '\uD83E\uDD49', 'Pronks']];
     return (
-      <div className="min-h-screen flex items-center justify-center p-6 bg-game">
-        <div className="w-full max-w-[600px]">
+      <div className="min-h-screen flex items-center justify-center p-6 bg-game relative overflow-hidden">
+        <MagicRings />
+        <div className="w-full max-w-[600px] relative z-10">
           <motion.div initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="text-center mb-8">
             <div className="flex items-center justify-center gap-2 mb-2">
               <span className="text-3xl">{'\uD83C\uDFC5'}</span>
@@ -73,7 +96,12 @@ export default function VotePhase({ answers, playerId, timer, votedCount, expect
             <motion.div
               animate={isLowTime ? { scale: [1, 1.1, 1] } : {}}
               transition={{ duration: 0.5, repeat: isLowTime ? Infinity : 0 }}
-              className="inline-block mt-2"
+              className="inline-block mt-2 px-6 py-3 rounded-2xl"
+              style={{
+                border: '2px solid rgba(240,147,251,0.4)',
+                background: 'rgba(255,255,255,0.05)',
+                backdropFilter: 'blur(12px)',
+              }}
             >
               <span className={`text-5xl font-black block ${timerColor}`}>{timer}s</span>
             </motion.div>
@@ -85,6 +113,21 @@ export default function VotePhase({ answers, playerId, timer, votedCount, expect
               <div className="space-y-4 mb-6">
                 {filteredAnswers.map((a, i) => {
                   const assigned = medalChoices[a.playerId] || null;
+                  const medalBackgrounds = {
+                    gold: 'linear-gradient(135deg, rgba(255,215,0,0.15), rgba(255,165,0,0.1))',
+                    silver: 'linear-gradient(135deg, rgba(192,192,192,0.12), rgba(169,169,169,0.08))',
+                    bronze: 'linear-gradient(135deg, rgba(205,127,50,0.15), rgba(184,115,51,0.1))',
+                  };
+                  const medalBorders = {
+                    gold: '2px solid rgba(255,215,0,0.5)',
+                    silver: '2px solid rgba(192,192,192,0.4)',
+                    bronze: '2px solid rgba(205,127,50,0.4)',
+                  };
+                  const medalShadows = {
+                    gold: '0 8px 32px rgba(255,215,0,0.3)',
+                    silver: '0 8px 32px rgba(192,192,192,0.2)',
+                    bronze: '0 8px 32px rgba(205,127,50,0.2)',
+                  };
                   return (
                     <motion.div
                       key={i}
@@ -93,27 +136,37 @@ export default function VotePhase({ answers, playerId, timer, votedCount, expect
                       transition={{ delay: i * 0.1 }}
                       className="rounded-3xl p-5 transition-all"
                       style={{
-                        background: assigned ? 'linear-gradient(135deg, rgba(245,87,108,0.15), rgba(240,147,251,0.15))' : 'rgba(255,255,255,0.05)',
+                        background: assigned ? medalBackgrounds[assigned] : 'rgba(255,255,255,0.05)',
                         backdropFilter: 'blur(12px)',
-                        border: assigned ? '2px solid rgba(240,147,251,0.5)' : '1px solid rgba(255,255,255,0.1)',
-                        boxShadow: assigned ? '0 8px 32px rgba(240,147,251,0.3)' : '0 8px 32px rgba(0,0,0,0.37)',
+                        border: assigned ? medalBorders[assigned] : '1px solid rgba(255,255,255,0.1)',
+                        boxShadow: assigned ? medalShadows[assigned] : '0 8px 32px rgba(0,0,0,0.37)',
                       }}
                     >
                       <p className="text-lg font-bold text-white mb-1">{a.text}</p>
                       <div className="flex gap-2 mt-2">
-                        {medals.map(([key, emoji, label]) => (
-                          <button key={key} onClick={() => handleMedalClick(a.playerId, key)}
-                            className="px-4 py-2 rounded-xl text-sm font-bold transition-all"
-                            style={{
-                              background: assigned === key ? 'linear-gradient(135deg, #f5576c, #f093fb)' : 'rgba(255,255,255,0.08)',
-                              border: assigned === key ? '2px solid rgba(240,147,251,0.6)' : '1px solid rgba(255,255,255,0.1)',
-                              color: 'white',
-                              transform: assigned === key ? 'scale(1.05)' : 'scale(1)',
-                            }}
-                          >
-                            {emoji} {label}
-                          </button>
-                        ))}
+                        {medals.map(([key, emoji, label]) => {
+                          const medalColors = {
+                            gold: { unselected: 'rgba(255,255,255,0.08)', selected: 'linear-gradient(135deg, #FFD700, #FFA500)', border: 'rgba(255,215,0,0.6)', shadow: 'rgba(255,215,0,0.4)' },
+                            silver: { unselected: 'rgba(255,255,255,0.08)', selected: 'linear-gradient(135deg, #E8E8E8, #C0C0C0)', border: 'rgba(192,192,192,0.6)', shadow: 'rgba(192,192,192,0.3)' },
+                            bronze: { unselected: 'rgba(255,255,255,0.08)', selected: 'linear-gradient(135deg, #CD7F32, #B87333)', border: 'rgba(205,127,50,0.6)', shadow: 'rgba(205,127,50,0.4)' },
+                          };
+                          const colors = medalColors[key];
+                          const isSelected = assigned === key;
+                          return (
+                            <button key={key} onClick={() => handleMedalClick(a.playerId, key)}
+                              className="px-4 py-2 rounded-xl text-sm font-bold transition-all"
+                              style={{
+                                background: isSelected ? colors.selected : colors.unselected,
+                                border: isSelected ? `2px solid ${colors.border}` : '1px solid rgba(255,255,255,0.1)',
+                                color: isSelected && key !== 'silver' ? '#000000' : 'white',
+                                transform: isSelected ? 'scale(1.08)' : 'scale(1)',
+                                boxShadow: isSelected ? `0 8px 32px ${colors.shadow}` : 'none',
+                              }}
+                            >
+                              {emoji} {label}
+                            </button>
+                          );
+                        })}
                       </div>
                     </motion.div>
                   );
@@ -148,8 +201,9 @@ export default function VotePhase({ answers, playerId, timer, votedCount, expect
 
   // Normal voting (R1, R2)
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 bg-game">
-      <div className="w-full max-w-[600px]">
+    <div className="min-h-screen flex items-center justify-center p-6 bg-game relative overflow-hidden">
+      <MagicRings />
+      <div className="w-full max-w-[600px] relative z-10">
         {/* Header */}
         <motion.div initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="text-center mb-8">
           <div className="flex items-center justify-center gap-2 mb-2">
@@ -160,7 +214,12 @@ export default function VotePhase({ answers, playerId, timer, votedCount, expect
           <motion.div
             animate={isLowTime ? { scale: [1, 1.1, 1] } : {}}
             transition={{ duration: 0.5, repeat: isLowTime ? Infinity : 0 }}
-            className="inline-block mt-2"
+            className="inline-block mt-2 px-6 py-3 rounded-2xl"
+            style={{
+              border: '2px solid rgba(240,147,251,0.4)',
+              background: 'rgba(255,255,255,0.05)',
+              backdropFilter: 'blur(12px)',
+            }}
           >
             <span className={`text-5xl font-black block ${timerColor}`}>{timer}s</span>
           </motion.div>
@@ -252,7 +311,7 @@ export default function VotePhase({ answers, playerId, timer, votedCount, expect
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="text-center">
           {hasVoted ? (
             <motion.p initial={{ scale: 0.8 }} animate={{ scale: 1 }} className="text-white/80 font-bold">
-              {'\u2728'} Sinu haal on registreeritud!
+              {'\u2728'} Sinu hääl on registreeritud!
             </motion.p>
           ) : (
             <p className="text-white/40 text-sm">Kliki kaardil, et hääletada...</p>

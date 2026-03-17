@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { motion } from 'motion/react';
 import { Crown, Users, Bot, Trash2, Play, Copy, Check, Sparkles } from 'lucide-react';
 import socket from '../socket';
+import MagicRings from './MagicRings';
+import ClickSpark from './ClickSpark';
 
 export default function Lobby({ roomCode, players, isHost, onStartGame, error }) {
   const [copied, setCopied] = useState(false);
@@ -20,8 +22,10 @@ export default function Lobby({ roomCode, players, isHost, onStartGame, error })
   const colors = ['#f5576c','#f093fb','#fda085','#38ef7d','#667eea','#00d2ff','#a18cd1','#fbc2eb','#ff6b6b','#48dbfb','#feca57','#ff9ff3','#54a0ff','#5f27cd','#01a3a4','#f368e0','#ee5a24','#6ab04c','#4834d4','#eb4d4b'];
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 bg-game">
-      <div className="w-full max-w-[500px]">
+    <div className="min-h-screen flex items-center justify-center p-6 bg-game relative overflow-hidden">
+      <ClickSpark />
+      <MagicRings positionX="left" positionY="top" />
+      <div className="w-full max-w-[500px] relative z-10">
         {/* Room Code */}
         <motion.div initial={{ y: -30, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="text-center mb-8">
           <p className="text-white/40 text-sm uppercase tracking-widest mb-2">Ruumi kood</p>

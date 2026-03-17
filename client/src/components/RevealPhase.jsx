@@ -1,12 +1,16 @@
 import { motion } from 'motion/react';
 import { Swords, Zap } from 'lucide-react';
+import MagicRings from './MagicRings';
+import ClickSpark from './ClickSpark';
 
 export default function RevealPhase({ answers, currentRound, battlePlayers }) {
   const isBattle = currentRound === 2;
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 bg-game">
-      <div className="w-full max-w-[600px]">
+    <div className="min-h-screen flex items-center justify-center p-6 bg-game relative overflow-hidden">
+      <ClickSpark />
+      <MagicRings />
+      <div className="w-full max-w-[600px] relative z-10">
         {/* Battle Banner */}
         {isBattle && battlePlayers && (
           <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="text-center mb-8">

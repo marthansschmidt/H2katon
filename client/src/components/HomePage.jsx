@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'motion/react';
-import ShuffleText from './ShuffleText';
+import CircularText from './CircularText';
 
 export default function HomePage({ onCreateRoom, onJoinRoom, error }) {
   const [view, setView] = useState('main');
@@ -20,29 +20,35 @@ export default function HomePage({ onCreateRoom, onJoinRoom, error }) {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 py-12 relative overflow-hidden" style={{ background: '#0a0a0c' }}>
-      {/* Background blur circles - inspired by Stitch design */}
-      <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-br from-purple-600 to-transparent opacity-20 blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-to-bl from-cyan-500 to-transparent opacity-10 blur-3xl pointer-events-none" />
+    <div className="min-h-screen w-full flex flex-col items-center justify-center p-4 relative overflow-hidden" style={{ background: '#0a0a0c' }}>
+      {/* Background blur circles */}
+      <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-br from-purple-600 to-transparent opacity-20 blur-3xl pointer-events-none z-0" />
+      <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-to-bl from-cyan-500 to-transparent opacity-10 blur-3xl pointer-events-none z-0" />
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-purple-900/5 to-transparent pointer-events-none z-0" />
 
-      <div className="relative z-10 w-full max-w-2xl">
-        {/* Hero Header */}
+      {/* Content container - all content gets z-10 */}
+      <div className="relative z-10 w-full flex flex-col items-center justify-center flex-1 max-w-2xl mx-auto px-4">
+        {/* Hero Header - Circular text with logo - same on all resolutions */}
         <motion.div
-          initial={{ opacity: 0, y: -30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-12"
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.7 }}
+          className="w-full flex items-center justify-center mb-12 md:mb-16"
         >
-          <motion.img
-            src="/suumadin_logo.png"
-            alt="SUUMADIN"
-            className="mx-auto mb-8 w-96 h-72 drop-shadow-[0_0_30px_rgba(255,0,255,0.6)]"
-            whileHover={{ scale: 1.1 }}
-          />
-          <ShuffleText text="SUUMADIN" colorFrom="#ff00ff" colorTo="#bc13fe" />
-          <p className="text-lg md:text-xl font-bold text-cyan-300 tracking-widest uppercase mt-4">
-            Kõige kiiremate vastuste mäng
-          </p>
+          <div className="relative flex items-center justify-center">
+            <CircularText 
+              text="SUUMADIN • SUUMADIN • SUUMADIN • SUUMADIN • SUUMADIN • SUUMADIN • SUUMADIN • SUUMADIN • "
+              spinDuration={35}
+              className=""
+            />
+            <motion.img
+              src="/suumadin_logo.png"
+              alt="SUUMADIN"
+              className="absolute w-48 h-40 sm:w-64 sm:h-52 md:w-72 md:h-60 drop-shadow-[0_0_40px_rgba(255,0,255,0.5)] z-20"
+              whileHover={{ scale: 1.05 }}
+              transition={{ type: 'spring', stiffness: 300 }}
+            />
+          </div>
         </motion.div>
 
         {view === 'main' && (
@@ -50,14 +56,14 @@ export default function HomePage({ onCreateRoom, onJoinRoom, error }) {
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.2 }}
-            className="space-y-8"
+            className="w-full space-y-6 md:space-y-8"
           >
             {/* Primary Action Button - LOO RUUM */}
             <motion.button
               whileHover={{ scale: 1.05, boxShadow: '0 0 50px rgba(255, 0, 255, 0.8)' }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setView('create')}
-              className="w-full py-6 px-8 bg-gradient-to-r from-pink-600 to-purple-600 rounded-2xl text-2xl font-black text-white transition-all duration-200 cursor-pointer hover:shadow-[0_0_30px_rgba(188,19,254,0.5)]"
+              className="w-full py-4 sm:py-6 px-8 bg-gradient-to-r from-pink-600 to-purple-600 rounded-2xl text-lg sm:text-2xl font-black text-white transition-all duration-200 cursor-pointer hover:shadow-[0_0_30px_rgba(188,19,254,0.5)]"
             >
               LOO RUUM
             </motion.button>
@@ -65,44 +71,26 @@ export default function HomePage({ onCreateRoom, onJoinRoom, error }) {
             {/* Divider */}
             <div className="flex items-center gap-4">
               <div className="h-px flex-grow bg-white/20" />
-              <span className="text-white/40 font-bold">VÕI</span>
+              <span className="text-white/40 font-bold text-sm">VÕI</span>
               <div className="h-px flex-grow bg-white/20" />
             </div>
 
-            {/* Join Room Card */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
-              className="p-8 rounded-3xl backdrop-blur-md border border-white/10 bg-white/5 hover:bg-white/10 transition-colors"
+            {/* Join Room Button */}
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setView('join')}
+              className="w-full py-4 sm:py-6 px-8 border-2 border-cyan-400 text-cyan-400 rounded-2xl text-lg sm:text-2xl font-black hover:bg-cyan-400/10 transition-all duration-300 cursor-pointer"
             >
-              <h2 className="text-center text-cyan-400 font-black mb-6 tracking-wider text-lg">
-                LIITU RUUMIGA
-              </h2>
-              <div className="space-y-4">
-                <input
-                  type="text"
-                  placeholder="KOOD"
-                  value={roomCode}
-                  onChange={(e) => setRoomCode(e.target.value.toUpperCase())}
-                  maxLength={6}
-                  className="w-full bg-black/40 border-2 border-white/20 rounded-xl py-4 text-center text-3xl font-black tracking-widest focus:border-cyan-400 focus:outline-none text-white placeholder:text-white/20 transition-colors"
-                />
-                <button
-                  onClick={() => setView('join')}
-                  className="w-full py-4 px-8 border-2 border-cyan-400 text-cyan-400 rounded-xl text-xl font-black hover:bg-cyan-400 hover:text-black transition-all duration-300 cursor-pointer"
-                >
-                  LIITU
-                </button>
-              </div>
-            </motion.div>
+              LIITU RUUMIGA
+            </motion.button>
 
-            {/* Instructions Section */}
+            {/* Instructions Section - Hidden on small screens */}
             <motion.section
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4 }}
-              className="mt-16 pt-8 border-t border-white/10"
+              className="hidden md:block mt-16 pt-8 border-t border-white/10"
             >
               <h3 className="text-3xl font-black text-center mb-12 italic text-white/90">
                 Kuidas mängida?
@@ -232,7 +220,7 @@ export default function HomePage({ onCreateRoom, onJoinRoom, error }) {
 
         {/* Footer */}
         <footer className="mt-20 py-8 opacity-40 text-sm font-medium tracking-widest uppercase text-center">
-          © 2024 SUUMADIN Party Games
+          © 2026 SUUMADIN Party Games
         </footer>
       </div>
     </div>

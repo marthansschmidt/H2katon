@@ -1,5 +1,7 @@
 import { motion } from 'motion/react';
 import { Trophy, Medal, Award, Star, TrendingUp } from 'lucide-react';
+import MagicRings from './MagicRings';
+import ClickSpark from './ClickSpark';
 
 export default function ScoresPhase({ players, answers, currentRound, currentSubRound, totalSubRounds, medals, mode }) {
   const isResults = mode === 'results';
@@ -44,8 +46,10 @@ export default function ScoresPhase({ players, answers, currentRound, currentSub
       : [...answers].sort((a, b) => (b.votes || 0) - (a.votes || 0));
 
     return (
-      <div className="min-h-screen flex items-center justify-center p-6 bg-game">
-        <div className="w-full max-w-[600px]">
+      <div className="min-h-screen flex items-center justify-center p-6 bg-game relative overflow-hidden">
+        <ClickSpark />
+        <MagicRings />
+        <div className="w-full max-w-[600px] relative z-10">
           <motion.div initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="text-center mb-8">
             <Star className="w-10 h-10 text-[#fda085] mx-auto mb-2" />
             <h1 className="text-3xl font-black text-gradient">{isMedalRound ? 'Medalid' : 'Tulemused'}</h1>
@@ -118,8 +122,10 @@ export default function ScoresPhase({ players, answers, currentRound, currentSub
 
   // Scoreboard mode
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 bg-game">
-      <div className="w-full max-w-[600px]">
+    <div className="min-h-screen flex items-center justify-center p-6 bg-game relative overflow-hidden">
+      <ClickSpark />
+      <MagicRings />
+      <div className="w-full max-w-[600px] relative z-10">
         <motion.div initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="text-center mb-8">
           <TrendingUp className="w-10 h-10 text-[#f093fb] mx-auto mb-2" />
           <h1 className="text-3xl font-black text-gradient">Punktitabel</h1>

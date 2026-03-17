@@ -4,14 +4,21 @@ const data = {
   3: { emoji: '🏅', name: 'TOP 3 medalivoor', desc: 'Kõik vastavad, kõik valivad kulla, hõbeda ja pronksi!' },
 };
 
+import MagicRings from './MagicRings';
+import ClickSpark from './ClickSpark';
+
 export default function RoundIntro({ currentRound }) {
   const r = data[currentRound] || data[1];
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-4 gap-4 animate-bounce-in">
-      <span className="text-6xl">{r.emoji}</span>
-      <h1 className="text-3xl font-black text-gradient">{r.name}</h1>
-      <p className="text-muted-foreground text-center max-w-xs">{r.desc}</p>
-      <p className="text-sm text-muted-foreground animate-pulse mt-2">Algab kohe...</p>
+    <div className="min-h-screen flex flex-col items-center justify-center px-4 gap-4 animate-bounce-in relative overflow-hidden">
+      <ClickSpark />
+      <MagicRings />
+      <div className="relative z-10">
+        <span className="text-6xl">{r.emoji}</span>
+        <h1 className="text-3xl font-black text-gradient">{r.name}</h1>
+        <p className="text-muted-foreground text-center max-w-xs">{r.desc}</p>
+        <p className="text-sm text-muted-foreground animate-pulse mt-2">Algab kohe...</p>
+      </div>
     </div>
   );
 }
