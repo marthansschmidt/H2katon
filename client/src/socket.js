@@ -5,15 +5,17 @@
 import { io } from 'socket.io-client';
 
 // Määra backend URL keskkonna järgi
-const backendUrl = import.meta.env.VITE_BACKEND_URL || (() => {
+const backendUrl = (() => {
   const protocol = window.location.protocol;
   const hostname = window.location.hostname;
+  
   // Dev: localhost:3001
   if (hostname === 'localhost' || hostname === '127.0.0.1') {
-    return `${protocol}//localhost:3001`;
+    return 'http://localhost:3001';
   }
-  // Prod: Render backend
-  return 'https://suumadin-backend.onrender.com';
+  
+  // Prod: kasuta frontendu sama URL-i (socket server jookseb samas kohast)
+  return `${protocol}//${hostname}`;
 })();
 
 console.log('[Socket] Backend URL:', backendUrl);
