@@ -11,16 +11,16 @@ export default function RevealPhase({ answers, currentRound, battlePlayers }) {
       <div className="w-full max-w-[600px] relative z-10">
         {/* Battle Banner */}
         {isBattle && battlePlayers && (
-          <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="text-center mb-8 p-4 sm:p-6">
-            <Swords className="w-12 h-12 text-[#fda085] mx-auto mb-3" />
-            <div className="flex items-center justify-center gap-3 sm:gap-4">
-              <span className="text-xl sm:text-2xl md:text-3xl font-black text-white leading-tight">{battlePlayers[0]?.name}</span>
+          <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="text-center mb-8 py-8 sm:py-10 px-4 sm:px-6 rounded-2xl" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)' }}>
+            <Swords className="w-12 h-12 text-[#fda085] mx-auto mb-4" />
+            <div className="flex items-center justify-center gap-2 sm:gap-3 md:gap-4">
+              <span className="text-lg sm:text-2xl md:text-3xl lg:text-4xl font-black text-white leading-normal py-2 px-1">{battlePlayers[0]?.name}</span>
               <motion.span
                 animate={{ scale: [1, 1.3, 1], rotate: [0, 10, -10, 0] }}
                 transition={{ duration: 1, repeat: Infinity }}
-                className="text-2xl sm:text-3xl md:text-4xl font-black text-gradient"
+                className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black text-gradient"
               >VS</motion.span>
-              <span className="text-xl sm:text-2xl md:text-3xl font-black text-white leading-tight">{battlePlayers[1]?.name}</span>
+              <span className="text-lg sm:text-2xl md:text-3xl lg:text-4xl font-black text-white leading-normal py-2 px-1">{battlePlayers[1]?.name}</span>
             </div>
           </motion.div>
         )}
