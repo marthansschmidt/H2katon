@@ -1,5 +1,6 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import socket from './socket';
+import { Volume2, VolumeX } from 'lucide-react';
 import HomePage from './components/HomePage';
 import Lobby from './components/Lobby';
 import RoundIntro from './components/RoundIntro';
@@ -8,6 +9,7 @@ import RevealPhase from './components/RevealPhase';
 import VotePhase from './components/VotePhase';
 import ScoresPhase from './components/ScoresPhase';
 import EndScreen from './components/EndScreen';
+import bgMusic from './components/taustamuusika.mp3';
 
 export default function App() {
   const [playerId, setPlayerId] = useState(null);
@@ -16,7 +18,25 @@ export default function App() {
   const [timer, setTimer] = useState(0);
   const [error, setError] = useState('');
   const [isConnected, setIsConnected] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
+  const audioRef = useRef(null);
 
+  // Initialize audio element
+  useEffect(() => {
+    const audio = new Audio(bgMusic);
+    audio.volume = 0.3; // 30% volume
+    audio.loop = true;
+    audioRef.current = audio;
+
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+    };
+  }, []);
+
+  // Socket listeners
   useEffect(() => {
     socket.on('game-state', (s) => setGameState(s));
     socket.on('timer-update', (t) => setTimer(t));
@@ -37,6 +57,20 @@ export default function App() {
       socket.off('vote-count');
     };
   }, []);
+
+  // Play background music when game starts (prompt phase)
+  useEffect(() => {
+    if (gameState?.roundPhase === 'prompt' && audioRef.current) {
+      if (audioRef.current.paused) {
+        audioRef.current.play().catch((err) => console.log('Muusika esitamine ebaõnnestus:', err));
+      }
+    } else if ((gameState?.state === 'lobby' || gameState?.state === 'end' || !gameState) && audioRef.current) {
+      if (!audioRef.current.paused) {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+      }
+    }
+  }, [gameState?.roundPhase, gameState?.state]);
 
   const handleCreateRoom = useCallback((name) => {
     setError('');
@@ -65,6 +99,16 @@ export default function App() {
   const handleSubmitMedals = useCallback((choices) => socket.emit('submit-medals', { choices }), []);
   const handlePlayAgain = useCallback(() => socket.emit('play-again'), []);
 
+  const toggleMute = useCallback(() => {
+    setIsMuted((prev) => {
+      const newMuted = !prev;
+      if (audioRef.current) {
+        audioRef.current.volume = newMuted ? 0 : 0.3;
+      }
+      return newMuted;
+    });
+  }, []);
+
   if (!roomCode || !gameState) {
     if (!isConnected) {
       return (
@@ -81,17 +125,40 @@ export default function App() {
 
   const isHost = playerId === gameState.hostId;
 
+  // Render with mute button
+  const renderWithMuteButton = (component) => (
+    <>
+      {component}
+      <button
+        onClick={toggleMute}
+        className="fixed top-4 right-4 z-50 p-3 rounded-full transition-all hover:scale-110 active:scale-95"
+        style={{
+          background: isMuted ? 'rgba(220, 38, 38, 0.2)' : 'rgba(56, 239, 125, 0.2)',
+          border: isMuted ? '2px solid rgba(220, 38, 38, 0.5)' : '2px solid rgba(56, 239, 125, 0.5)',
+          backdropFilter: 'blur(12px)',
+        }}
+        title={isMuted ? 'Tõsta heli' : 'Vaigista'}
+      >
+        {isMuted ? (
+          <VolumeX className="w-6 h-6 text-red-400" />
+        ) : (
+          <Volume2 className="w-6 h-6 text-green-400" />
+        )}
+      </button>
+    </>
+  );
+
   if (gameState.state === 'lobby')
-    return <Lobby roomCode={roomCode} players={gameState.players} isHost={isHost} onStartGame={handleStartGame} error={error} />;
+    return renderWithMuteButton(<Lobby roomCode={roomCode} players={gameState.players} isHost={isHost} onStartGame={handleStartGame} error={error} />);
 
   if (gameState.state === 'end' || gameState.roundPhase === 'final')
-    return <EndScreen players={gameState.players} isHost={isHost} onPlayAgain={handlePlayAgain} medals={gameState.medals} />;
+    return renderWithMuteButton(<EndScreen players={gameState.players} isHost={isHost} onPlayAgain={handlePlayAgain} medals={gameState.medals} />);
 
   const rp = gameState.roundPhase;
-  if (rp === 'intro') return <RoundIntro currentRound={gameState.currentRound} />;
+  if (rp === 'intro') return renderWithMuteButton(<RoundIntro currentRound={gameState.currentRound} />);
 
   if (rp === 'prompt')
-    return (
+    return renderWithMuteButton(
       <PromptPhase prompt={gameState.currentPrompt} currentRound={gameState.currentRound}
         currentSubRound={gameState.currentSubRound} totalSubRounds={gameState.totalSubRounds}
         timer={timer} answeredCount={gameState.answeredCount} expectedAnswers={gameState.expectedAnswers}
@@ -100,7 +167,7 @@ export default function App() {
 
   // Skip reveal phase, go directly to voting
   if (rp === 'reveal' || rp === 'vote')
-    return (
+    return renderWithMuteButton(
       <VotePhase answers={gameState.answers} playerId={playerId} timer={timer}
         votedCount={gameState.votedCount} expectedVoters={gameState.expectedVoters}
         onVote={handleVote} onSubmitMedals={handleSubmitMedals}
@@ -108,20 +175,20 @@ export default function App() {
     );
 
   if (rp === 'results')
-    return (
+    return renderWithMuteButton(
       <ScoresPhase players={gameState.players} answers={gameState.answers} currentRound={gameState.currentRound}
         currentSubRound={gameState.currentSubRound} totalSubRounds={gameState.totalSubRounds}
         medals={gameState.medals} mode="results" />
     );
 
   if (rp === 'scoreboard')
-    return (
+    return renderWithMuteButton(
       <ScoresPhase players={gameState.players} answers={gameState.answers} currentRound={gameState.currentRound}
         currentSubRound={gameState.currentSubRound} totalSubRounds={gameState.totalSubRounds}
         medals={gameState.medals} mode="scoreboard" />
     );
 
-  return (
+  return renderWithMuteButton(
     <div className="min-h-screen w-full flex items-center justify-center relative overflow-hidden" style={{ background: '#0a0a0c' }}>
       <p className="text-white/60 animate-pulse text-lg relative z-10">Laadin...</p>
     </div>

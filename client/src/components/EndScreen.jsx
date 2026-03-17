@@ -1,8 +1,8 @@
 import { motion } from 'motion/react';
-import { RotateCcw, Sparkles, Star } from 'lucide-react';
+import { RotateCcw, Sparkles } from 'lucide-react';
 import MagicRings from './MagicRings';
 
-export default function EndScreen({ players, isHost, onPlayAgain, medals }) {
+export default function EndScreen({ players, isHost, onPlayAgain }) {
   const sorted = [...players].sort((a, b) => b.score - a.score);
 
   const getMedalIcon = (i) => {
@@ -42,12 +42,6 @@ export default function EndScreen({ players, isHost, onPlayAgain, medals }) {
               const medal = getMedalIcon(i);
               const isTop3 = i < 3;
               
-              // Get medals for this player
-              const playerMedals = (medals && medals[p.id]) || {};
-              const goldCount = playerMedals.gold || 0;
-              const silverCount = playerMedals.silver || 0;
-              const bronzeCount = playerMedals.bronze || 0;
-              
               return (
                 <motion.div
                   key={p.id}
@@ -80,16 +74,8 @@ export default function EndScreen({ players, isHost, onPlayAgain, medals }) {
                     </div>
 
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap">
+                      <div className="flex items-center gap-2">
                         <span className="font-bold text-white">{p.name}</span>
-                        {i === 0 && (
-                          <motion.div animate={{ rotate: 360 }} transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}>
-                            <Star className="w-4 h-4 fill-yellow-300 text-yellow-300 flex-shrink-0" />
-                          </motion.div>
-                        )}
-                        {goldCount > 0 && <span className="text-sm">🥇×{goldCount}</span>}
-                        {silverCount > 0 && <span className="text-sm">🥈×{silverCount}</span>}
-                        {bronzeCount > 0 && <span className="text-sm">🥉×{bronzeCount}</span>}
                       </div>
                     </div>
 

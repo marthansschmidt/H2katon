@@ -134,7 +134,7 @@ export default function VotePhase({ answers, playerId, timer, votedCount, expect
                       initial={{ x: -20, opacity: 0 }}
                       animate={{ x: 0, opacity: 1 }}
                       transition={{ delay: i * 0.1 }}
-                      className="rounded-3xl p-5 transition-all"
+                      className="rounded-3xl p-5 transition-colors duration-300"
                       style={{
                         background: assigned ? medalBackgrounds[assigned] : 'rgba(255,255,255,0.05)',
                         backdropFilter: 'blur(12px)',
@@ -154,7 +154,7 @@ export default function VotePhase({ answers, playerId, timer, votedCount, expect
                           const isSelected = assigned === key;
                           return (
                             <button key={key} onClick={() => handleMedalClick(a.playerId, key)}
-                              className="px-4 py-2 rounded-xl text-sm font-bold transition-all"
+                              className="px-4 py-2 rounded-xl text-sm font-bold transition-transform duration-200"
                               style={{
                                 background: isSelected ? colors.selected : colors.unselected,
                                 border: isSelected ? `2px solid ${colors.border}` : '1px solid rgba(255,255,255,0.1)',
