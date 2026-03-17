@@ -1,0 +1,10 @@
+services:
+  - type: static_site
+    name: suumadin-frontend
+    buildCommand: npm --prefix client install && npm --prefix client run build
+    publishPath: client/dist
+    buildFilter:
+      paths:
+        include:
+          - /client/**
+          - /package.json
