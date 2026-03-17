@@ -508,7 +508,7 @@ io.on('connection', function(socket) {
     var room = rooms[roomCode];
     if (!room) return callback({ success: false, error: 'Ruumi ei leitud!' });
     if (room.state !== 'lobby') return callback({ success: false, error: 'Mäng on juba alanud!' });
-    if (room.players.length >= 20) return callback({ success: false, error: 'Ruum on täis! (max 20)' });
+    if (room.players.length >= 15) return callback({ success: false, error: 'Ruum on täis! (max 15)' });
     if (room.players.some(function(p) { return p.name === playerName; })) return callback({ success: false, error: 'See nimi on juba kasutusel!' });
     room.players.push({ id: socket.id, name: playerName, score: 0 });
     socket.join(roomCode);
@@ -519,7 +519,7 @@ io.on('connection', function(socket) {
 
   socket.on('add-bot', function(_, callback) {
     var room = rooms[socket.roomCode];
-    if (!room || room.hostId !== socket.id || room.state !== 'lobby' || room.players.length >= 20) {
+    if (!room || room.hostId !== socket.id || room.state !== 'lobby' || room.players.length >= 15) {
       if (callback) callback({ success: false, error: 'Ei saa botti lisada' });
       return;
     }

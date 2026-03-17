@@ -22,6 +22,7 @@ export default function Lobby({ roomCode, players, isHost, onStartGame, error })
 
   return (
     <div className="min-h-screen flex items-center justify-center p-6 bg-game relative overflow-hidden">
+      <ClickSpark />
       <MagicRings positionX="left" positionY="top" />
       <div className="w-full max-w-[500px] relative z-10">
         {/* Room Code */}
@@ -60,7 +61,7 @@ export default function Lobby({ roomCode, players, isHost, onStartGame, error })
             </div>
             <span className="text-sm font-bold px-3 py-1 rounded-full"
               style={{ background: 'rgba(240,147,251,0.2)', color: '#f093fb' }}
-            >{players.length}/15</span>
+            >{players.length}/20</span>
           </div>
 
           <div className="space-y-2 max-h-[320px] overflow-y-auto pr-1">
@@ -99,7 +100,7 @@ export default function Lobby({ roomCode, players, isHost, onStartGame, error })
         {/* Host Controls */}
         {isHost && (
           <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }} className="space-y-3">
-            {players.length < 15 && (
+            {players.length < 20 && (
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}

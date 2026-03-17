@@ -1,9 +1,8 @@
 import { motion } from 'motion/react';
 import { RotateCcw, Sparkles, Star } from 'lucide-react';
 import MagicRings from './MagicRings';
-import ClickSpark from './ClickSpark';
 
-export default function EndScreen({ players, isHost, onPlayAgain }) {
+export default function EndScreen({ players, isHost, onPlayAgain, medals }) {
   const sorted = [...players].sort((a, b) => b.score - a.score);
 
   const getMedalIcon = (i) => {
@@ -21,28 +20,33 @@ export default function EndScreen({ players, isHost, onPlayAgain }) {
   };
 
   return (
-    <div className="min-h-screen flex flex-col p-6 bg-game relative overflow-hidden" style={{ background: '#0a0a0c' }}>
-      <ClickSpark />
+    <div className="min-h-screen flex flex-col p-6 sm:p-8 bg-game relative overflow-hidden" style={{ background: '#0a0a0c' }}>
       <MagicRings />
       <div className="relative z-10 w-full flex-1 flex flex-col">
         {/* Title */}
-        <motion.div initial={{ y: -30, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="text-center pt-6 mb-10">
-          <h1 className="text-4xl md:text-5xl font-black mb-1" style={{
+        <motion.div initial={{ y: -30, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="text-center pt-10 sm:pt-12 mb-8">
+          <h1 className="text-5xl sm:text-6xl md:text-7xl font-black mb-4 leading-tight" style={{
             background: 'linear-gradient(135deg, #ff00ff, #bc13fe)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             backgroundClip: 'text',
           }}>Mäng läbi!</h1>
-          <p className="text-white/50 text-sm">Siin on lõplikud tulemused</p>
+          <p className="text-white/60 text-sm sm:text-base font-semibold">Siin on lõplikud tulemused</p>
         </motion.div>
 
         {/* All Players - Scrollable */}
-        <div className="flex-1 overflow-y-auto px-2 pb-4">
+        <div className="flex-1 overflow-y-auto px-2 pb-6">
           <div className="max-w-[600px] mx-auto space-y-3">
             {sorted.map((p, i) => {
               const style = getRowStyles(i);
               const medal = getMedalIcon(i);
               const isTop3 = i < 3;
+              
+              // Get medals for this player
+              const playerMedals = (medals && medals[p.id]) || {};
+              const goldCount = playerMedals.gold || 0;
+              const silverCount = playerMedals.silver || 0;
+              const bronzeCount = playerMedals.bronze || 0;
               
               return (
                 <motion.div
@@ -76,13 +80,16 @@ export default function EndScreen({ players, isHost, onPlayAgain }) {
                     </div>
 
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 flex-wrap">
                         <span className="font-bold text-white">{p.name}</span>
                         {i === 0 && (
                           <motion.div animate={{ rotate: 360 }} transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}>
                             <Star className="w-4 h-4 fill-yellow-300 text-yellow-300 flex-shrink-0" />
                           </motion.div>
                         )}
+                        {goldCount > 0 && <span className="text-sm">🥇×{goldCount}</span>}
+                        {silverCount > 0 && <span className="text-sm">🥈×{silverCount}</span>}
+                        {bronzeCount > 0 && <span className="text-sm">🥉×{bronzeCount}</span>}
                       </div>
                     </div>
 
@@ -101,7 +108,7 @@ export default function EndScreen({ players, isHost, onPlayAgain }) {
         </div>
 
         {/* Play Again Button */}
-        <div className="mt-auto px-2 pb-6">
+        <div className="mt-auto px-2 pb-8 sm:pb-10">
           <div className="max-w-[600px] mx-auto">
             {isHost && (
               <motion.button

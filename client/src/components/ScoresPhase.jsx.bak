@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import { Trophy, Star, TrendingUp } from 'lucide-react';
+import { Trophy, Medal, Award, Star, TrendingUp } from 'lucide-react';
 import MagicRings from './MagicRings';
 
 export default function ScoresPhase({ players, answers, currentRound, currentSubRound, totalSubRounds, medals, mode }) {
@@ -7,6 +7,17 @@ export default function ScoresPhase({ players, answers, currentRound, currentSub
   const sorted = [...players].sort((a, b) => b.score - a.score);
 
   const medalEmoji = { gold: '\uD83E\uDD47', silver: '\uD83E\uDD48', bronze: '\uD83E\uDD49' };
+  const rankIcons = [
+    <Trophy className="w-6 h-6 text-yellow-400" />,
+    <Medal className="w-6 h-6 text-gray-300" />,
+    <Award className="w-6 h-6 text-amber-600" />,
+  ];
+
+  const rankGradients = [
+    'linear-gradient(135deg, rgba(255,215,0,0.15), rgba(255,165,0,0.1))',
+    'linear-gradient(135deg, rgba(192,192,192,0.1), rgba(169,169,169,0.08))',
+    'linear-gradient(135deg, rgba(205,127,50,0.1), rgba(184,115,51,0.08))',
+  ];
 
   // Helper: medals from server is an object { playerId: { gold: N, silver: N, bronze: N } }
   const getMedalList = (playerId) => {
@@ -35,6 +46,7 @@ export default function ScoresPhase({ players, answers, currentRound, currentSub
 
     return (
       <div className="min-h-screen flex items-center justify-center p-6 bg-game relative overflow-hidden">
+        <ClickSpark />
         <MagicRings />
         <div className="w-full max-w-[600px] relative z-10">
           <motion.div initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="text-center mb-8">
@@ -107,25 +119,10 @@ export default function ScoresPhase({ players, answers, currentRound, currentSub
     );
   }
 
-  // Helper: get medal icon (same as EndScreen)
-  const getMedalIcon = (i) => {
-    const icons = ['🥇', '🥈', '🥉'];
-    return icons[i] || null;
-  };
-
-  // Helper: get row styles (same as EndScreen)
-  const getRowStyles = (i) => {
-    const styles = [
-      { background: 'linear-gradient(135deg, rgba(255,215,0,0.2), rgba(255,165,0,0.15))', border: '2px solid rgba(255,215,0,0.5)', shadow: '0 8px 32px rgba(255,215,0,0.3)' },
-      { background: 'linear-gradient(135deg, rgba(192,192,192,0.15), rgba(169,169,169,0.1))', border: '2px solid rgba(192,192,192,0.4)', shadow: '0 8px 32px rgba(192,192,192,0.2)' },
-      { background: 'linear-gradient(135deg, rgba(205,127,50,0.15), rgba(184,115,51,0.1))', border: '2px solid rgba(205,127,50,0.4)', shadow: '0 8px 32px rgba(205,127,50,0.2)' },
-    ];
-    return styles[i] || { background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', shadow: 'none' };
-  };
-
   // Scoreboard mode
   return (
     <div className="min-h-screen flex items-center justify-center p-6 bg-game relative overflow-hidden">
+      <ClickSpark />
       <MagicRings />
       <div className="w-full max-w-[600px] relative z-10">
         <motion.div initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="text-center mb-8">
@@ -134,56 +131,38 @@ export default function ScoresPhase({ players, answers, currentRound, currentSub
         </motion.div>
 
         <div className="space-y-3">
-          {sorted.map((p, i) => {
-            const style = getRowStyles(i);
-            const medal = getMedalIcon(i);
-            const isTop3 = i < 3;
-
-            return (
-              <motion.div
-                key={p.id}
-                initial={{ x: -30, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                transition={{ delay: i * 0.1 }}
-                className="rounded-2xl p-4 flex items-center gap-3 relative overflow-hidden group"
-                style={{
-                  background: style.background,
-                  backdropFilter: 'blur(12px)',
-                  border: style.border,
-                  boxShadow: style.shadow,
-                }}
-              >
-                {isTop3 && (
-                  <motion.div 
-                    className="absolute inset-0" 
-                    style={{
-                      background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent)',
-                      backgroundSize: '200% 100%',
-                    }}
-                    animate={{ backgroundPosition: ['200% 0', '-200% 0'] }}
-                    transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
-                  />
+          {sorted.map((p, i) => (
+            <motion.div
+              key={p.id}
+              initial={{ x: -30, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ delay: i * 0.1 }}
+              className="rounded-2xl p-4 flex items-center gap-4"
+              style={{
+                background: i < 3 ? rankGradients[i] : 'rgba(255,255,255,0.05)',
+                backdropFilter: 'blur(12px)',
+                border: i === 0 ? '2px solid rgba(255,215,0,0.4)' : '1px solid rgba(255,255,255,0.08)',
+                boxShadow: i === 0 ? '0 8px 32px rgba(255,215,0,0.2)' : 'none',
+              }}
+            >
+              <div className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center">
+                {i < 3 ? rankIcons[i] : (
+                  <span className="text-white/40 font-bold text-lg">#{i + 1}</span>
                 )}
+              </div>
 
-                <div className="relative z-10 flex items-center gap-3 w-full">
-                  <div className="flex-shrink-0 text-2xl">
-                    {medal || <span className="text-white/40 font-bold">#{i + 1}</span>}
-                  </div>
+              <div className="flex-1 min-w-0">
+                <span className="font-bold text-white truncate block">{p.name}</span>
+              </div>
 
-                  <div className="flex-1 min-w-0">
-                    <span className="font-bold text-white truncate block">{p.name}</span>
-                  </div>
-
-                  <div className="flex-shrink-0">
-                    <span className="text-xl font-black" style={{
-                      background: 'linear-gradient(135deg, #f5576c, #f093fb)',
-                      WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
-                    }}>{p.score}</span>
-                  </div>
-                </div>
-              </motion.div>
-            );
-          })}
+              <div className="flex-shrink-0">
+                <span className="text-2xl font-black" style={{
+                  background: 'linear-gradient(135deg, #f5576c, #f093fb)',
+                  WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
+                }}>{p.score}</span>
+              </div>
+            </motion.div>
+          ))}
         </div>
       </div>
     </div>
