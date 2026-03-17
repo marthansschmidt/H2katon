@@ -14,8 +14,8 @@ const backendUrl = (() => {
     return 'http://localhost:3001';
   }
   
-  // Prod: kasuta frontendu sama URL-i (socket server jookseb samas kohast)
-  return `${protocol}//${hostname}`;
+  // Prod: Render backend
+  return 'https://suumadin-backend.onrender.com';
 })();
 
 console.log('[Socket] Backend URL:', backendUrl);

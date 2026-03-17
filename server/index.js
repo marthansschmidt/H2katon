@@ -225,7 +225,7 @@ function r1FinishVoting(roomCode) {
     } else {
       showScoreboard(roomCode, function() { startRound2(roomCode); });
     }
-  }, 4000);
+  }, 8000);
 }
 
 function startRound2(roomCode) {
@@ -326,7 +326,7 @@ function r2FinishVoting(roomCode) {
     } else {
       showScoreboard(roomCode, function() { startRound3(roomCode); });
     }
-  }, 4000);
+  }, 8000);
 }
 
 function startRound3(roomCode) {
@@ -417,7 +417,7 @@ function r3FinishMedalVote(roomCode) {
     room.state = 'end';
     room.roundPhase = 'final';
     emitState(roomCode);
-  }, 5000);
+  }, 8000);
 }
 
 function showScoreboard(roomCode, nextFn) {
