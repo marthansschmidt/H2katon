@@ -11,35 +11,105 @@ const io = new Server(server, {
 });
 
 const ROUND1_PROMPTS = [
-  'Mis oleks kõige naljakam asi, mida {nimi} võiks koolis teha?',
-  'Kui {nimi} oleks direktor, mis reegel ta teeks?',
-  'Mis on kõige halvem vabandus, mida {nimi} võiks kasutada?',
-  'Kui {nimi} oleks superkangelane, mis oleks tema võime?',
-  'Mis on kõige veidram hobi, mis võiks olla {nimi}?',
-  'Mis on kõige veidram põhjus, miks {nimi} võiks kooli hilineda?',
-  'Mis oleks kõige naljakam asi, mida {nimi} võiks tunnis kogemata öelda?',
-  'Kui {nimi} peaks looma uue kooliaine, mis see oleks?',
-  'Mis on kõige parem omadus, mis teeb {nimi}-st hea tiimikaaslase?',
+  'Mis oleks kõige naljakam asi, mida {nimi} võiks eksami ajal teha?',
+  'Kui {nimi} oleks koolidirektor, mis oleks esimene asi, mida ta muudaks?',
+  'Mis on kõige veidram koht, kus {nimi} võiks kodutööd teha?',
+  'Kui {nimi} oleks klassijuhataja, mida ta keelaks?',
+  'Mis oleks kõige naljakam vabandus, mida {nimi} võiks kasutada hilinemiseks?',
+  'Kui {nimi} peaks pidama koolis kõne, millest ta räägiks?',
+  'Mis oleks kõige imelikum koolikott, mis {nimi}-l võiks olla?',
+  'Kui {nimi} oleks kooli maskott, milline ta oleks?',
+  'Mis oleks kõige hullem kontrolltöö, mida {nimi} võiks saada?',
+  'Kui {nimi} oleks õpetaja, milline aine oleks tema oma?',
+  'Mis oleks kõige naljakam asi, mida {nimi} võiks sööklas teha?',
+  'Kui {nimi} peaks ühe koolireegli eemaldama, mis see oleks?',
+  'Mis oleks kõige imelikum projekt, mida {nimi} võiks teha?',
+  'Kui {nimi} oleks kuulus inimene, mille poolest ta tuntud oleks?',
+  'Mis oleks kõige veidram põhjus, miks {nimi} ei teinud kodutööd?',
+  'Kui {nimi} oleks filmis, mis roll tal oleks?',
+  'Mis oleks kõige naljakam hüüdnimi, mida {nimi} võiks saada?',
+  'Kui {nimi} peaks korraldama kooli ürituse, mis see oleks?',
+  'Mis oleks kõige kummalisem aine, mida {nimi} tahaks õppida?',
+  'Kui {nimi} oleks kooli reegel, milline ta oleks?',
+  'Mis oleks kõige naljakam asi, mida {nimi} võiks sporditunnis teha?',
+  'Kui {nimi} oleks kooli legend, mille poolest ta tuntud oleks?',
+  'Mis oleks kõige hullem koht, kus {nimi} võiks magama jääda?',
+  'Kui {nimi} oleks klassi esindaja, mida ta lubaks?',
+  'Mis oleks kõige imelikum küsimus, mida {nimi} võiks tunnis küsida?',
+  'Kui {nimi} peaks valima ühe töö terveks eluks, mis see oleks?',
+  'Mis oleks kõige naljakam asi, mida {nimi} võiks esitluse ajal teha?',
+  'Kui {nimi} oleks kooli reeglite muutja, mida ta lisaks?',
+  'Mis oleks kõige veidram asi, mida {nimi} võiks kooli kaasa võtta?',
+  'Kui {nimi} oleks tunnikell, millal ta heliseks?',
+  'Mis oleks kõige naljakam asi, mida {nimi} võiks klassipildil teha?',
+  'Kui {nimi} oleks kooli direktor üheks päevaks, mida ta lubaks?',
+  'Mis oleks kõige imelikum eksam, mida {nimi} võiks teha?',
+  'Kui {nimi} oleks kooli reklaam, mida ta ütleks?',
+  'Mis oleks kõige naljakam asi, mida {nimi} võiks rühmatöös teha?',
+  'Kui {nimi} oleks kooli meem, milline see oleks?',
+  'Mis oleks kõige hullem päev, mida {nimi} võiks koolis kogeda?',
+  'Mis oleks kõige imelikum koht, kus {nimi} võiks õppida?',
 ];
 
 const ROUND2_PROMPTS = [
-  'Mis oleks kõige halvem superjõud?',
-  'Mis on kõige parem vabandus kodutöö ära unustamiseks?',
-  'Mida sa teeksid, kui sa oleksid ühe päeva nähtamatu?',
-  'Mis oleks kõige halvem nimetus uuele koolile?',
-  'Kui sa saaksid muuta ühte koolireeglit, mida sa muudaksid?',
-  'Mis oleks kõige naljakam kooli hümni sõlm?',
-  'Mis oleks halvim asi, mida klassiruumist leida?',
-  'Kui sa saaksid ühte asja koolis ära keelata, mis see oleks?',
+  'Mis oleks kõige hullem põhjus kooli mitte tulla?',
+  'Mis oleks kõige naljakam koolivorm?',
+  'Mis oleks kõige mõttetum kooliaine?',
+  'Mis oleks parim vabandus kontrolltöö vältimiseks?',
+  'Mis oleks kõige hullem klassireegel?',
+  'Mis oleks kõige naljakam kooli nimi?',
+  'Mis oleks kõige halvem asi, mida õpetaja võiks öelda?',
+  'Mis oleks kõige veidram kooliprojekt?',
+  'Mis oleks kõige naljakam asi, mida direktor võiks teha?',
+  'Mis oleks kõige hullem koht õppimiseks?',
+  'Mis oleks kõige parem asi koolis keelata?',
+  'Mis oleks kõige naljakam spordiala koolis?',
+  'Mis oleks kõige imelikum kodutöö?',
+  'Mis oleks kõige hullem koolitoit?',
+  'Mis oleks kõige naljakam asi, mida klass võiks teha?',
+  'Mis oleks kõige veidram eksam?',
+  'Mis oleks kõige naljakam asi, mida tunnis juhtuda?',
+  'Mis oleks kõige hullem koolipäev?',
+  'Mis oleks kõige parem põhjus tunni ära jätmiseks?',
+  'Mis oleks kõige naljakam kooli üritus?',
+  'Mis oleks kõige hullem rühmatöö?',
+  'Mis oleks kõige imelikum küsimus õpetajale?',
+  'Mis oleks kõige naljakam asi, mida keegi esitlusel teeb?',
+  'Mis oleks kõige hullem karistus?',
+  'Mis oleks kõige veidram kooliklubi?',
+  'Mis oleks kõige naljakam klassinimi?',
+  'Mis oleks kõige hullem aine terveks aastaks?',
+  'Mis oleks kõige naljakam asi, mida võiks direktor keelata?',
+  'Mis oleks kõige imelikum koolipäeva algus?',
 ];
 
 const ROUND3_PROMPTS = [
-  'Kirjelda oma ideaalset koolipäeva ühe lausega.',
-  'Mis oleks kõige parem asi kooli kohta, kui sa oleksid direktor?',
-  'Leiuta uus kooliaine ja anna sellele nimi.',
-  'Mis oleks kõige naljakam asi, mida õpetaja võiks klassis öelda?',
-  'Kui sa saaksid valida ühe superkangelase, kes sind kooli viiks, kes see oleks ja miks?',
+  'Kirjelda oma ideaalset koolipäeva kolme sõnaga.',
+  'Leiuta uus koolireegel.',
+  'Mis oleks parim viis õppimiseks?',
+  'Kirjelda halvimat võimalikku koolipäeva.',
+  'Leiuta uus kooliaine.',
+  'Mis muudaks kooli lõbusamaks?',
+  'Kirjelda ideaalset õpetajat.',
+  'Mis on kõige parem asi kooli juures?',
+  'Mis on kõige hullem asi kooli juures?',
+  'Kirjelda ideaalset klassi.',
+  'Mis oleks ideaalne vahetund?',
+  'Leiuta uus kooli üritus.',
+  'Mis muudaks tunnid huvitavamaks?',
+  'Kirjelda ideaalset rühmatööd.',
+  'Mis oleks parim viis eksami tegemiseks?',
+  'Kirjelda ideaalset koolireisi.',
+  'Mis oleks parim kooli traditsioon?',
+  'Leiuta uus kooliklubi.',
+  'Mis teeks kooli lihtsamaks?',
+  'Kirjelda ideaalset koolimaja.',
+  'Mis oleks kõige parem koolitoit?',
+  'Kirjelda ideaalset õpetamisviisi.',
+  'Mis muudaks õppimise kiiremaks?',
+  'Mis oleks ideaalne koolipäeva algus?',
 ];
+
 
 const BOT_ANSWERS = [
   'Kindlasti midagi väga imelikku.',
@@ -71,10 +141,9 @@ function randomBotAnswer() {
 var rooms = {};
 
 function generateRoomCode() {
-  var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
   var code = '';
   for (var i = 0; i < 4; i++) {
-    code += chars.charAt(Math.floor(Math.random() * chars.length));
+    code += Math.floor(Math.random() * 10).toString();
   }
   if (rooms[code]) return generateRoomCode();
   return code;
@@ -82,6 +151,17 @@ function generateRoomCode() {
 
 function pickRandom(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function pickRandomPrompt(arr, usedPrompts) {
+  var available = arr.filter(function(p) { return usedPrompts.indexOf(p) === -1; });
+  if (available.length === 0) {
+    usedPrompts.length = 0;
+    available = arr.slice();
+  }
+  var chosen = available[Math.floor(Math.random() * available.length)];
+  usedPrompts.push(chosen);
+  return chosen;
 }
 
 function shuffle(arr) {
@@ -104,13 +184,14 @@ function startTimer(roomCode, seconds, onEnd) {
   room.timer = seconds;
   io.to(roomCode).emit('timer-update', room.timer);
   room.timerInterval = setInterval(function() {
-    room.timer--;
-    io.to(roomCode).emit('timer-update', room.timer);
     if (room.timer <= 0) {
       clearInterval(room.timerInterval);
       room.timerInterval = null;
       onEnd();
+      return;
     }
+    room.timer--;
+    io.to(roomCode).emit('timer-update', room.timer);
   }, 1000);
 }
 
@@ -171,7 +252,7 @@ function startR1Prompt(roomCode) {
   var room = rooms[roomCode];
   if (!room) return;
   var promptPlayer = pickRandom(room.players);
-  var promptTemplate = pickRandom(ROUND1_PROMPTS);
+  var promptTemplate = pickRandomPrompt(ROUND1_PROMPTS, room.usedR1Prompts);
   room.currentPrompt = promptTemplate.replace(/{nimi}/g, promptPlayer.name);
   room.promptPlayerId = promptPlayer.id;
   room.answers = [];
@@ -225,7 +306,7 @@ function r1FinishVoting(roomCode) {
     } else {
       showScoreboard(roomCode, function() { startRound2(roomCode); });
     }
-  }, 8000);
+  }, 10000);
 }
 
 function startRound2(roomCode) {
@@ -251,7 +332,7 @@ function startR2Battle(roomCode) {
   var pair = shuffled.slice(0, 2);
   room.battlePlayers = pair.map(function(p) { return { id: p.id, name: p.name }; });
   room.usedBattlePairs.push(pair[0].id, pair[1].id);
-  room.currentPrompt = pickRandom(ROUND2_PROMPTS);
+  room.currentPrompt = pickRandomPrompt(ROUND2_PROMPTS, room.usedR2Prompts);
   room.promptPlayerId = null;
   room.answers = [];
   room.votes = {};
@@ -326,7 +407,7 @@ function r2FinishVoting(roomCode) {
     } else {
       showScoreboard(roomCode, function() { startRound3(roomCode); });
     }
-  }, 8000);
+  }, 10000);
 }
 
 function startRound3(roomCode) {
@@ -342,7 +423,7 @@ function startRound3(roomCode) {
 function startR3Prompt(roomCode) {
   var room = rooms[roomCode];
   if (!room) return;
-  room.currentPrompt = pickRandom(ROUND3_PROMPTS);
+  room.currentPrompt = pickRandomPrompt(ROUND3_PROMPTS, room.usedR3Prompts);
   room.promptPlayerId = null;
   room.answers = [];
   room.votes = {};
@@ -417,7 +498,7 @@ function r3FinishMedalVote(roomCode) {
     room.state = 'end';
     room.roundPhase = 'final';
     emitState(roomCode);
-  }, 8000);
+  }, 10000);
 }
 
 function showScoreboard(roomCode, nextFn) {
@@ -425,7 +506,7 @@ function showScoreboard(roomCode, nextFn) {
   if (!room) return;
   room.roundPhase = 'scoreboard';
   emitState(roomCode);
-  setTimeout(function() { nextFn(); }, 6000);
+  setTimeout(function() { nextFn(); }, 10000);
 }
 
 function scheduleBotAnswers(roomCode) {
@@ -490,6 +571,9 @@ io.on('connection', function(socket) {
       medals: {},
       publicMedals: null,
       usedBattlePairs: [],
+      usedR1Prompts: [],
+      usedR2Prompts: [],
+      usedR3Prompts: [],
       expectedAnswers: 0,
       expectedVoters: 0,
       timer: 0,

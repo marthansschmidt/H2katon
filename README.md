@@ -4,27 +4,39 @@ Veebipõhine Suumadin mäng õpilaste omavahelise suhtlemise arendamiseks. Eesti
 
 ## 📋 Kirjeldus
 
-Mängu käik:
+Suumadin on interaktiivne partei- ja klassimäng, kus mängijad annavad loomingulisi vastuseid küsimustele ja hääletavad parimate vastuste poolt.
 
-1. **Üks mängija loob ruumi** ja saab ruumikoodi
-2. **Teised liituvad** ruumikoodiga
+### Mängu käik:
+
+1. **Üks mängija loob ruumi** ja saab 4-kohalise numbrilise ruumikoodi (0000-9999)
+2. **Teised liituvad** ruumikoodi sisestades
 3. Host **alustab mängu** (vähemalt 2 mängijat)
-4. Iga voor kuvab **prompti** (küsimuse), kus kasutatakse mängijate nimesid
-5. Mängijad kirjutavad **lühikesed vastused** (45 sek)
-6. Vastused kuvatakse **anonüümselt**
-7. Mängijad **hääletavad** parima vastuse poolt (30 sek)
-8. Punkte jagatakse häälte alusel (100p iga hääle eest)
-9. Pärast 5 vooru kuvatakse **lõpptulemus**
+4. **3 vooru** erinevate küsimustega:
+   - **Voor 1 & 2:** Klassikaline Suumadin - kutsida vastuseid ja hääletada
+   - **Voor 3:** Medal-voor - määrata kullast, hõbeda ja pronksi medalid
+
+### Voorude käik:
+
+- Küsimus nähtav kogu aja (nimed on **bold** ja suurem)
+- Mängijad kirjutavad **lühikesed vastused** (30 sek)
+- Vastused kuvatakse **anonüümselt**
+- Mängijad **hääletavad** vastuste poolt (15 sek hääletamine)
+- Punkte jagatakse häälte alusel (100p iga hääle eest)
+- Tulemused nähtavad (10 sek)
+- Pärast 3 vooru kuvatakse **lõpptulemus**
 
 ## 🛠️ Tehnoloogiad
 
-| Komponent         | Tehnoloogia                         |
-| ----------------- | ----------------------------------- |
-| Frontend          | React 18 + Vite                     |
-| Backend           | Node.js + Express                   |
-| Reaalajas suhtlus | Socket.IO                           |
-| Stiil             | Puhas CSS (modern, gradient-põhine) |
-| Andmebaas         | Puudub (in-memory)                  |
+| Komponent         | Tehnoloogia                          |
+| ----------------- | ------------------------------------ |
+| Frontend          | React 18 + Vite                      |
+| Animatsioonid     | Framer Motion                        |
+| 3D Graafika       | Three.js + WebGL (MagicRings efekt)  |
+| Backend           | Node.js + Express                    |
+| Reaalajas suhtlus | Socket.IO                            |
+| Stiil             | Tailwind CSS + custom glass-morphism |
+| Ikoonid           | Lucide React                         |
+| Andmebaas         | Puudub (in-memory)                   |
 
 ## 🚀 Käivitamine
 
@@ -101,27 +113,49 @@ H2katon/
 ### Olekumasin (State Machine)
 
 ```
-lobby → prompt → reveal → vote → scores → prompt (järgmine voor)
-                                            ↓
-                                     (5 vooru pärast)
-                                            ↓
-                                           end → lobby (mängi uuesti)
+lobby → intro → prompt → reveal/vote → results → scoreboard → prompt (järgmine voor)
+                                                                    ↓
+                                                           (3 vooru pärast)
+                                                                    ↓
+                                                                  end
 ```
+
+### Voorude struktuuri
+
+- **Round 1:** Klassikaline Suumadin
+  - Prompt: "Mis oleks kõige naljakam asi, mida **[Nimi]** võiks teha?"
+  - Vastamise aeg: 30s
+  - Hääletamise aeg: 15s
+- **Round 2:** Lahing (2 juhuslikku mängijat esitavad vastuseid)
+  - Prompt: Tavaliselt üldine küsimus
+  - Vastamise aeg: 30s
+  - Hääletamise aeg: 15s
+
+- **Round 3:** Medal-voor
+  - Prompt: Küsimused ilma nimedeta (nt "Leiuta uus koolireegel")
+  - Hääletamise aeg: 15s
+  - Medal-valik: Kuld (1. koht), Hõbe (2. koht), Pronks (3. koht)
 
 ### Andmemudel (serveri mälus)
 
 ```javascript
 room = {
   hostId: "socket-id", // Hosti tunnus
-  players: [{ id, name, score }], // Mängijad
+  players: [{ id, name, score, isBot }], // Mängijad
   state: "lobby", // Mängu faas
-  currentRound: 0, // Praegune voor
-  totalRounds: 5, // Voorude arv
-  currentPrompt: "", // Praegune küsimus
-  answers: [{ playerId, text }], // Vastused
-  votes: { playerId: count }, // Hääled
+  currentRound: 1, // Praegune voor (1-3)
+  currentSubRound: 1, // Allvooru number
+  totalSubRounds: 2, // Allvoorude arv
+  roundPhase: "prompt", // Faas: prompt, reveal, vote, results, scoreboard
+  currentPrompt: "", // Praegune küsimus (nimed on bold)
+  promptPlayerId: "", // Kelle nime promptis kasutatakse
+  battlePlayers: [], // Round 2 lahingu mängijad
+  answers: [{ playerId, playerName, text, votes }], // Vastused
+  votes: { playerId: count }, // Hääled per vastus
   votedPlayers: [], // Hääletanud mängijad
-  usedPrompts: [], // Kasutatud küsimused
+  usedR1Prompts: [], // Kasutatud R1 küsimused
+  usedR2Prompts: [], // Kasutatud R2 küsimused
+  usedR3Prompts: [], // Kasutatud R3 küsimused
 };
 ```
 
@@ -140,18 +174,76 @@ room = {
 
 ## 📝 Promptide näited
 
-- "Mis on kõige veidram põhjus, miks **Mari** võiks kooli hilineda?"
-- "Kui **Jaan** oleks direktor, siis millise uue reegli ta kohe teeks?"
-- "Mis oleks kõige naljakam asi, mida **Kati** võiks tunnis kogemata öelda?"
+### Round 1 (Klassikaline Suumadin)
 
-Promptides asendatakse `{nimi}` juhusliku mängija nimega.
+- "Mis oleks kõige veidram põhjus, miks **{nimi}** võiks kooli hilineda?"
+- "Kui **{nimi}** oleks direktor, siis millise uue reegli ta kohe teeks?"
+- "Mis oleks kõige naljakam asi, mida **{nimi}** võiks tunnis kogemata öelda?"
+
+### Round 2 (Lahing)
+
+- "Mis oleks parim vabandus kontrolltöö vältimiseks?"
+- "Mis oleks kõige naljakam koolivorm?"
+- "Mis oleks kõige hullem klassireegel?"
+
+### Round 3 (Medal-voor)
+
+- "Kirjelda oma ideaalset koolipäeva kolme sõnaga."
+- "Leiuta uus koolireegel."
+- "Mis muudaks kooli lõbusamaks?"
+
+**Märkus:** Promptides asendatakse `{nimi}` juhusliku mängija nimega ja need kuvatakse **bold** ja suurem.
 
 ## ⚙️ Konfiguratsioon
 
 Muudetavad väärtused `server/index.js` failis:
 
-- `totalRounds: 5` – voorude arv
-- Vastamise aeg: `45` sekundit
-- Hääletamise aeg: `30` sekundit
-- Max mängijaid: `8`
-- Punktid hääle kohta: `100`
+### Voorude taimerid:
+
+- Prompti vastamise aeg: **30 sekundit**
+- Hääletamise aeg: **15 sekundit**
+- Tulemuste kuvamise aeg: **10 sekundit**
+- Scoreboardide kuvamise aeg: **10 sekundit**
+
+### Ruumi seaded:
+
+- Ruumikoodide formaat: **4-kohaline number (0000-9999)**
+- Max mängijaid: **15**
+- Punktid hääle kohta: **100 punkti**
+- Vooru arv: **3 vooru**
+
+### Küsimuste andmebaas:
+
+- **Round 1 Prompts:** 37+ kooliteemaliseid küsimusi mängijate nimedega
+- **Round 2 Prompts:** 29+ üldiseid küsimusi
+- **Round 3 Prompts:** 15+ loovad kutsed ilma nimedeta
+
+> **Märkus:** Promptide duplikaate ei esine - iga küsimus kuvatakse max üks kord mängu käigus.
+
+## ✨ Hetkeseisus olevad omadused
+
+### UI/UX
+
+- ✅ Animeeritud 3D taust (MagicRings - Three.js WebGL efekt)
+- ✅ Glass-morphism disain modernsete gradient efektidega
+- ✅ Sujuvad transitsioonid ja Framer Motion animatsioonid
+- ✅ Instruktsiooni popup avaleheküljel
+- ✅ Back-nupp lobbist avalehele tagasiminek
+- ✅ Ruumikoodid on numbrilised (0000-9999)
+
+### Mängumehaanika
+
+- ✅ 3 vooru erinevate küsimuste ja taimeritega
+- ✅ Medal-voor kulla, hõbeda ja pronksi valikuga
+- ✅ Lahing (Battle) mode 2. vooruses
+- ✅ Küsimused nähtavad kogu aja hääletamise ja medal-vooruses
+- ✅ Mängijate nimed on **bold** ja suurem prompts
+- ✅ 80+ eestikeelsed küsimused
+- ✅ Bot-mängijate tugi hosti jaoks
+
+### Jõudlus
+
+- ✅ Optimeeritud Vite bundle (~56KB main, ~214KB vendors)
+- ✅ Gzip kompressioon (~14KB main, ~200KB vendors)
+- ✅ Kood eraldatud (code splitting) vendor-bundlede kaupa
+- ✅ Cache headrite optimisatsioon produktsioonikiirenduseks
