@@ -1,5 +1,5 @@
 const data = {
-  1: { emoji: '🎤', name: 'Nimekas voor', desc: 'Kõik vastavad, kõik hääletavad! Promptimängija saab rohkem punkte.' },
+  1: { emoji: '🎤', name: 'Nimelaksuvoor', desc: 'Kõik vastavad, kõik hääletavad! Promptimängija saab rohkem punkte.' },
   2: { emoji: '⚔️', name: '1 vs 1 lahing', desc: 'Kaks mängijat võistlevad, teised hääletavad!' },
   3: { emoji: '🏅', name: 'Medalivoor', desc: 'Kõik vastavad, kõik valivad kulla, hõbeda ja pronksi!' },
 };

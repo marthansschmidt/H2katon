@@ -5,4 +5,10 @@
   height: 100%;
   pointer-events: none;
   z-index: 0;
+  will-change: transform;
+}
+
+canvas {
+  display: block;
+  will-change: contents;
 }
