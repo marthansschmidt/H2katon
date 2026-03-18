@@ -1,4 +1,15 @@
 services:
+  - type: web
+    name: suumadin-backend
+    runtime: node
+    buildCommand: cd server && npm install
+    startCommand: cd server && node index.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3001
+
   - type: static_site
     name: suumadin-frontend
     buildCommand: npm --prefix client install && npm --prefix client run build
