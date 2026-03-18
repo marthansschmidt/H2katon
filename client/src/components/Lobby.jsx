@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { motion } from 'motion/react';
-import { Crown, Users, Bot, Trash2, Play, Copy, Check, Sparkles } from 'lucide-react';
+import { Crown, Users, Bot, Trash2, Play, Copy, Check, Sparkles, ArrowLeft } from 'lucide-react';
 import socket from '../socket';
 import MagicRings from './MagicRings';
 
-export default function Lobby({ roomCode, players, isHost, onStartGame, error }) {
+export default function Lobby({ roomCode, players, isHost, onStartGame, onLeaveRoom, error }) {
   const [copied, setCopied] = useState(false);
 
   const copyCode = () => {
@@ -150,6 +150,24 @@ export default function Lobby({ roomCode, players, isHost, onStartGame, error })
             {error}
           </motion.p>
         )}
+
+        {/* Back Button */}
+        <motion.button
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4 }}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={onLeaveRoom}
+          className="w-full mt-6 min-h-[48px] px-6 py-3 rounded-2xl font-bold text-white transition-all flex items-center justify-center gap-2"
+          style={{
+            background: 'rgba(255,255,255,0.08)',
+            border: '1px solid rgba(255,255,255,0.15)',
+            backdropFilter: 'blur(12px)',
+          }}
+        >
+          <ArrowLeft className="w-5 h-5" /> Tagasi
+        </motion.button>
       </div>
     </div>
   );

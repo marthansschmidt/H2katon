@@ -16,6 +16,35 @@ export default function PromptPhase({ prompt, currentRound, currentSubRound, tot
   const isSpectator = isBattle && !isBattlePlayer;
   const isLowTime = timer <= 10;
 
+  // Parse prompt ja eralda suuremalt näidatavad osad (nimed)
+  const renderPrompt = (text) => {
+    if (!text) return text;
+    // Otsime nimed - sõnad, mis algavad suurega ja järgneb teisele suurega algusega sõnale
+    // Näiteks "Masina-Mari", "Anna-Liisa" - kaheosalised nimed
+    const parts = text.split(/(\b[A-Z][a-zäöü]*(?:-[A-Z][a-zäöü]*)+\b|\b[A-Z][a-zäöü]+\b(?=\s+[A-Z]))/);
+    let skipNext = false;
+    return parts.map((part, i) => {
+      if (!part) return null;
+      // Kui eelmises osas oli nimi, siis järgmine suurega sõna on ka osa nimest
+      if (skipNext && /^[A-Z][a-zäöü]+$/.test(part)) {
+        skipNext = false;
+        return <span key={i} className="text-2xl font-black text-[#f093fb]">{part}</span>;
+      }
+      skipNext = false;
+      // Kui osa on nimi (kaheosaline või järgneb suurele sõnale)
+      if (/^[A-Z][a-zäöü]*(?:-[A-Z][a-zäöü]*)+$/.test(part)) {
+        skipNext = true;
+        return <span key={i} className="text-2xl font-black text-[#f093fb]">{part}</span>;
+      }
+      // Kui sõna algab suurega JA järgneb veel üks suure algusega sõna
+      if (/^[A-Z][a-zäöü]+$/.test(part) && i + 1 < parts.length && /^[A-Z][a-zäöü]+$/.test(parts[i + 1])) {
+        skipNext = true;
+        return <span key={i} className="text-2xl font-black text-[#f093fb]">{part}</span>;
+      }
+      return <span key={i}>{part}</span>;
+    }).filter(Boolean);
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center p-6 bg-game relative overflow-hidden">
       <MagicRings />
@@ -62,7 +91,7 @@ export default function PromptPhase({ prompt, currentRound, currentSubRound, tot
           className="glass rounded-3xl p-6 mb-6 text-center"
         >
           <Sparkles className="w-6 h-6 text-[#f093fb] mx-auto mb-3" />
-          <p className="text-xl font-bold text-white leading-relaxed">{prompt}</p>
+          <p className="text-xl font-bold text-white leading-relaxed">{renderPrompt(prompt)}</p>
         </motion.div>
 
         {/* Spectator view */}

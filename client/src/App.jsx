@@ -63,6 +63,11 @@ export default function App() {
   const handleVote = useCallback((id) => socket.emit('submit-vote', { votedForPlayerId: id }), []);
   const handleSubmitMedals = useCallback((choices) => socket.emit('submit-medals', { choices }), []);
   const handlePlayAgain = useCallback(() => socket.emit('play-again'), []);
+  const handleLeaveRoom = useCallback(() => {
+    setRoomCode(null);
+    setPlayerId(null);
+    setGameState(null);
+  }, []);
 
   if (!roomCode || !gameState) {
     if (!isConnected) {
@@ -81,7 +86,7 @@ export default function App() {
   const isHost = playerId === gameState.hostId;
 
   if (gameState.state === 'lobby')
-    return <Lobby roomCode={roomCode} players={gameState.players} isHost={isHost} onStartGame={handleStartGame} error={error} />;
+    return <Lobby roomCode={roomCode} players={gameState.players} isHost={isHost} onStartGame={handleStartGame} onLeaveRoom={handleLeaveRoom} error={error} />;
 
   if (gameState.state === 'end' || gameState.roundPhase === 'final')
     return <EndScreen players={gameState.players} isHost={isHost} onPlayAgain={handlePlayAgain} medals={gameState.medals} />;
@@ -103,7 +108,8 @@ export default function App() {
       <VotePhase answers={gameState.answers} playerId={playerId} timer={timer}
         votedCount={gameState.votedCount} expectedVoters={gameState.expectedVoters}
         onVote={handleVote} onSubmitMedals={handleSubmitMedals}
-        currentRound={gameState.currentRound} battlePlayers={gameState.battlePlayers} />
+        currentRound={gameState.currentRound} battlePlayers={gameState.battlePlayers}
+        prompt={gameState.currentPrompt} />
     );
 
   if (rp === 'results')

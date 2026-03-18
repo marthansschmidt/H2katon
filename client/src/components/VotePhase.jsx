@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { motion } from 'motion/react';
-import { ThumbsUp, Flame, Star, Swords } from 'lucide-react';
+import { ThumbsUp, Star, Swords } from 'lucide-react';
 import MagicRings from './MagicRings';
 
-export default function VotePhase({ answers, playerId, timer, votedCount, expectedVoters, onVote, onSubmitMedals, currentRound, battlePlayers }) {
+export default function VotePhase({ answers, playerId, timer, votedCount, expectedVoters, onVote, onSubmitMedals, currentRound, battlePlayers, prompt }) {
   const [selectedId, setSelectedId] = useState(null);
   const [hasVoted, setHasVoted] = useState(false);
   const [medalChoices, setMedalChoices] = useState({});
@@ -12,6 +12,35 @@ export default function VotePhase({ answers, playerId, timer, votedCount, expect
   const isBattle = currentRound === 2;
   const isBattlePlayer = isBattle && battlePlayers?.some((bp) => bp.id === playerId);
   const isLowTime = timer <= 10;
+
+  // Parse prompt ja eralda suuremalt näidatavad osad (nimed)
+  const renderPrompt = (text) => {
+    if (!text) return text;
+    // Otsime nimed - sõnad, mis algavad suurega ja järgneb teisele suurega algusega sõnale
+    // Näiteks "Masina-Mari", "Anna-Liisa" - kaheosalised nimed
+    const parts = text.split(/(\b[A-Z][a-zäöü]*(?:-[A-Z][a-zäöü]*)+\b|\b[A-Z][a-zäöü]+\b(?=\s+[A-Z]))/);
+    let skipNext = false;
+    return parts.map((part, i) => {
+      if (!part) return null;
+      // Kui eelmises osas oli nimi, siis järgmine suurega sõna on ka osa nimest
+      if (skipNext && /^[A-Z][a-zäöü]+$/.test(part)) {
+        skipNext = false;
+        return <span key={i} className="text-2xl font-black text-[#f093fb]">{part}</span>;
+      }
+      skipNext = false;
+      // Kui osa on nimi (kaheosaline või järgneb suurele sõnale)
+      if (/^[A-Z][a-zäöü]*(?:-[A-Z][a-zäöü]*)+$/.test(part)) {
+        skipNext = true;
+        return <span key={i} className="text-2xl font-black text-[#f093fb]">{part}</span>;
+      }
+      // Kui sõna algab suurega JA järgneb veel üks suure algusega sõna
+      if (/^[A-Z][a-zäöü]+$/.test(part) && i + 1 < parts.length && /^[A-Z][a-zäöü]+$/.test(parts[i + 1])) {
+        skipNext = true;
+        return <span key={i} className="text-2xl font-black text-[#f093fb]">{part}</span>;
+      }
+      return <span key={i}>{part}</span>;
+    }).filter(Boolean);
+  };
 
   const handleVote = (id) => {
     if (id === playerId || hasVoted || isBattlePlayer) return;
@@ -106,6 +135,15 @@ export default function VotePhase({ answers, playerId, timer, votedCount, expect
               <span className={`text-5xl font-black block ${timerColor}`}>{timer}s</span>
             </motion.div>
           </motion.div>
+
+          {/* Küsimus */}
+          {prompt && (
+            <motion.div initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="text-center mb-6 p-6 rounded-3xl glass">
+              <p className="text-xl font-bold text-white/90 leading-relaxed">
+                {renderPrompt(prompt)}
+              </p>
+            </motion.div>
+          )}
 
           {!hasVoted ? (
             <>
@@ -206,15 +244,11 @@ export default function VotePhase({ answers, playerId, timer, votedCount, expect
       <div className="w-full max-w-[600px] relative z-10">
         {/* Header */}
         <motion.div initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="text-center mb-8">
-          <div className="flex items-center justify-center gap-2 mb-2">
-            <Flame className="w-8 h-8 text-[#fda085]" />
-            <h1 className="text-4xl font-black uppercase text-gradient">Hääletamine</h1>
-            <Flame className="w-8 h-8 text-[#f093fb]" />
-          </div>
+          <h1 className="text-4xl font-black uppercase text-gradient mb-4">Hääletamine</h1>
           <motion.div
             animate={isLowTime ? { scale: [1, 1.1, 1] } : {}}
             transition={{ duration: 0.5, repeat: isLowTime ? Infinity : 0 }}
-            className="inline-block mt-2 px-6 py-3 rounded-2xl"
+            className="inline-block px-6 py-3 rounded-2xl"
             style={{
               border: '2px solid rgba(240,147,251,0.4)',
               background: 'rgba(255,255,255,0.05)',
@@ -223,8 +257,16 @@ export default function VotePhase({ answers, playerId, timer, votedCount, expect
           >
             <span className={`text-5xl font-black block ${timerColor}`}>{timer}s</span>
           </motion.div>
-          <p className="text-white/60 text-sm mt-2">{hasVoted ? '' : 'Vali parim vastus!'}</p>
         </motion.div>
+
+        {/* Küsimus */}
+        {prompt && (
+          <motion.div initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="text-center mb-8 p-6 rounded-3xl glass">
+            <p className="text-xl font-bold text-white/90 leading-relaxed">
+              {renderPrompt(prompt)}
+            </p>
+          </motion.div>
+        )}
 
         {/* Voting Cards */}
         <div className="space-y-6 mb-8">

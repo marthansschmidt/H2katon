@@ -8,12 +8,3 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <App />
   </React.StrictMode>
 );
-
-// Register Service Worker for offline support and caching
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/src/sw.js').catch(() => {
-      // Service worker registration failed, app still works
-    });
-  });
-}

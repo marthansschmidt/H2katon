@@ -1,11 +1,18 @@
-import { useState } from 'react';
-import { motion } from 'motion/react';
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { HelpCircle, X } from 'lucide-react';
 import CircularText from './CircularText';
 
 export default function HomePage({ onCreateRoom, onJoinRoom, error }) {
   const [view, setView] = useState('main');
   const [playerName, setPlayerName] = useState('');
   const [roomCode, setRoomCode] = useState('');
+  const [showInstructions, setShowInstructions] = useState(true);
+
+  useEffect(() => {
+    // Popup tuleb kohe lahti esimest korda
+    setShowInstructions(true);
+  }, []);
 
   const handleCreate = (e) => {
     e.preventDefault();
@@ -58,24 +65,7 @@ export default function HomePage({ onCreateRoom, onJoinRoom, error }) {
             transition={{ delay: 0.2 }}
             className="w-full space-y-6 md:space-y-8"
           >
-            {/* Primary Action Button - LOO RUUM */}
-            <motion.button
-              whileHover={{ scale: 1.05, boxShadow: '0 0 50px rgba(255, 0, 255, 0.8)' }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setView('create')}
-              className="w-full py-4 sm:py-6 px-8 bg-gradient-to-r from-pink-600 to-purple-600 rounded-2xl text-lg sm:text-2xl font-black text-white transition-all duration-200 cursor-pointer hover:shadow-[0_0_30px_rgba(188,19,254,0.5)]"
-            >
-              LOO RUUM
-            </motion.button>
-
-            {/* Divider */}
-            <div className="flex items-center gap-4">
-              <div className="h-px flex-grow bg-white/20" />
-              <span className="text-white/40 font-bold text-sm">VÕI</span>
-              <div className="h-px flex-grow bg-white/20" />
-            </div>
-
-            {/* Join Room Button */}
+            {/* Primary Action Button - LIITU RUUMIGA */}
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -85,41 +75,37 @@ export default function HomePage({ onCreateRoom, onJoinRoom, error }) {
               LIITU RUUMIGA
             </motion.button>
 
-            {/* Instructions Section - Hidden on small screens */}
-            <motion.section
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.4 }}
-              className="hidden md:block mt-16 pt-8 border-t border-white/10"
+            {/* Divider */}
+            <div className="flex items-center gap-4">
+              <div className="h-px flex-grow bg-white/20" />
+              <span className="text-white/40 font-bold text-sm">VÕI</span>
+              <div className="h-px flex-grow bg-white/20" />
+            </div>
+
+            {/* Join Room Button - LOO RUUM */}
+            <motion.button
+              whileHover={{ scale: 1.05, boxShadow: '0 0 50px rgba(255, 0, 255, 0.8)' }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setView('create')}
+              className="w-full py-4 sm:py-6 px-8 bg-gradient-to-r from-pink-600 to-purple-600 rounded-2xl text-lg sm:text-2xl font-black text-white transition-all duration-200 cursor-pointer hover:shadow-[0_0_30px_rgba(188,19,254,0.5)]"
             >
-              <h3 className="text-3xl font-black text-center mb-12 italic text-white/90">
-                Kuidas mängida?
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                {[
-                  { num: 1, text: 'Sisesta vastus küsimusele nii kiiresti kui võimalik.', color: 'from-pink-600 to-pink-500' },
-                  { num: 2, text: 'Teised mängijad hääletavad parimate vastuste poolt.', color: 'from-purple-600 to-purple-500' },
-                  { num: 3, text: 'Kogu punkte ja võida!', color: 'from-cyan-600 to-cyan-500' }
-                ].map((step) => (
-                  <motion.div
-                    key={step.num}
-                    className="p-8 rounded-2xl backdrop-blur-md border border-white/10 bg-white/5 text-center hover:bg-white/10 transition-all group"
-                  >
-                    <div
-                      className={`w-12 h-12 bg-gradient-to-br ${step.color} text-white rounded-full flex items-center justify-center font-black text-2xl mx-auto mb-6`}
-                      style={{
-                        boxShadow: `0 0 15px rgba(188, 19, 254, 0.6)`
-                      }}
-                    >
-                      {step.num}
-                    </div>
-                    <p className="text-lg font-bold leading-tight">
-                      {step.text}
-                    </p>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.section>
+              LOO RUUM
+            </motion.button>
+
+            {/* Info Button */}
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setShowInstructions(true)}
+              className="w-full py-3 px-6 rounded-2xl font-bold text-white transition-all flex items-center justify-center gap-2"
+              style={{
+                background: 'rgba(255,255,255,0.08)',
+                border: '1px solid rgba(255,255,255,0.15)',
+                backdropFilter: 'blur(12px)',
+              }}
+            >
+              <HelpCircle className="w-5 h-5" /> Kuidas mängida?
+            </motion.button>
           </motion.div>
         )}
 
@@ -185,8 +171,9 @@ export default function HomePage({ onCreateRoom, onJoinRoom, error }) {
               type="text"
               placeholder="KOOD"
               value={roomCode}
-              onChange={(e) => setRoomCode(e.target.value.toUpperCase())}
+              onChange={(e) => setRoomCode(e.target.value.replace(/[^0-9]/g, ''))}
               maxLength={4}
+              inputMode="numeric"
               className="w-full px-6 py-5 rounded-2xl text-white text-3xl font-black text-center tracking-widest placeholder:text-white/40 bg-black/40 border-2 border-white/20 focus:border-cyan-400 focus:outline-none"
             />
             <motion.button
@@ -217,6 +204,69 @@ export default function HomePage({ onCreateRoom, onJoinRoom, error }) {
             {error}
           </motion.p>
         )}
+
+        {/* Instructions Modal */}
+        <AnimatePresence>
+          {showInstructions && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowInstructions(false)}
+              className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+            >
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                onClick={(e) => e.stopPropagation()}
+                className="bg-gradient-to-br from-purple-900/40 to-pink-900/40 rounded-3xl backdrop-blur-md border border-white/20 p-8 max-w-2xl w-full max-h-[80vh] overflow-y-auto"
+              >
+                <div className="flex items-center justify-between mb-8">
+                  <h2 className="text-3xl font-black text-white">Kuidas mängida?</h2>
+                  <motion.button
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => setShowInstructions(false)}
+                    className="p-2 hover:bg-white/10 rounded-lg transition-all"
+                  >
+                    <X className="w-6 h-6 text-white" />
+                  </motion.button>
+                </div>
+                
+                <div className="space-y-6">
+                  {[
+                    { num: 1, text: 'Sisesta vastus küsimusele nii kiiresti kui võimalik.', color: 'from-pink-600 to-pink-500' },
+                    { num: 2, text: 'Teised mängijad hääletavad parimate vastuste poolt.', color: 'from-purple-600 to-purple-500' },
+                    { num: 3, text: 'Kogu punkte ja võida!', color: 'from-cyan-600 to-cyan-500' }
+                  ].map((step) => (
+                    <motion.div
+                      key={step.num}
+                      initial={{ x: -20, opacity: 0 }}
+                      animate={{ x: 0, opacity: 1 }}
+                      transition={{ delay: step.num * 0.1 }}
+                      className="flex gap-6"
+                    >
+                      <div
+                        className={`w-16 h-16 bg-gradient-to-br ${step.color} text-white rounded-full flex items-center justify-center font-black text-3xl flex-shrink-0`}
+                        style={{
+                          boxShadow: `0 0 20px rgba(188, 19, 254, 0.6)`
+                        }}
+                      >
+                        {step.num}
+                      </div>
+                      <div className="flex-1 flex items-center">
+                        <p className="text-lg font-bold text-white/90">
+                          {step.text}
+                        </p>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Footer */}
         <footer className="mt-20 py-8 opacity-40 text-sm font-medium tracking-widest uppercase text-center">
