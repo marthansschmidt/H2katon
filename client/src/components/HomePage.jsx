@@ -271,8 +271,8 @@ export default function HomePage({ onCreateRoom, onJoinRoom, error }) {
         {/* Footer */}
         <footer className="mt-20 py-8 opacity-40 text-sm font-medium tracking-widest uppercase text-center">
           <div className="mb-2">© 2026 SUUMADIN Party Games</div>
-          <div className="mb-2">Mängu loojad Märt H ja Roven P</div>
-          <div>VSo25</div>
+          <div className="mb-2">Mängu autorid: Märt H. ja Roven P.</div>
+          <div className="normal-case">VSo25</div>
         </footer>
       </div>
     </div>
