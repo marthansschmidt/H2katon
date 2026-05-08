@@ -5,10 +5,14 @@
 import { io } from 'socket.io-client';
 
 // Määra backend URL keskkonna järgi
-const backendUrl = (() => {
+export const backendUrl = (() => {
   const protocol = window.location.protocol;
   const hostname = window.location.hostname;
   
+  if (import.meta.env.VITE_BACKEND_URL) {
+    return import.meta.env.VITE_BACKEND_URL;
+  }
+
   // Dev: localhost:3001
   if (hostname === 'localhost' || hostname === '127.0.0.1') {
     return 'http://localhost:3001';

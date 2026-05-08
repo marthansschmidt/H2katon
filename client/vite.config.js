@@ -11,7 +11,7 @@ export default defineConfig({
     },
   },
   build: {
-    outDir: '../dist',
+    outDir: 'dist',
     emptyOutDir: true,
     minify: 'terser',
     terserOptions: {
@@ -26,7 +26,7 @@ export default defineConfig({
           'vendor-react': ['react', 'react-dom'],
           'vendor-three': ['three'],
           'vendor-socket': ['socket.io-client'],
-          'vendor-motion': ['framer-motion'],
+          'vendor-motion': ['motion'],
         },
       },
     },

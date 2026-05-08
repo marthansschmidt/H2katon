@@ -1,10 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
-import socket from './socket';
+import socket, { backendUrl } from './socket';
 import HomePage from './components/HomePage';
 import Lobby from './components/Lobby';
 import RoundIntro from './components/RoundIntro';
 import PromptPhase from './components/PromptPhase';
-import RevealPhase from './components/RevealPhase';
 import VotePhase from './components/VotePhase';
 import ScoresPhase from './components/ScoresPhase';
 import EndScreen from './components/EndScreen';
@@ -15,12 +14,13 @@ export default function App() {
   const [gameState, setGameState] = useState(null);
   const [timer, setTimer] = useState(0);
   const [error, setError] = useState('');
-  const [isConnected, setIsConnected] = useState(false);
+  const [isConnected, setIsConnected] = useState(socket.connected);
   useEffect(() => {
     socket.on('game-state', (s) => setGameState(s));
     socket.on('timer-update', (t) => setTimer(t));
     socket.on('connect', () => setIsConnected(true));
     socket.on('disconnect', () => setIsConnected(false));
+    socket.on('connect_error', () => setIsConnected(false));
     socket.on('answer-count', (d) =>
       setGameState((p) => p ? { ...p, answeredCount: d.answeredCount, expectedAnswers: d.expectedAnswers } : p)
     );
@@ -32,6 +32,7 @@ export default function App() {
       socket.off('timer-update');
       socket.off('connect');
       socket.off('disconnect');
+      socket.off('connect_error');
       socket.off('answer-count');
       socket.off('vote-count');
     };
@@ -75,7 +76,7 @@ export default function App() {
         <div className="min-h-screen w-full flex items-center justify-center relative overflow-hidden" style={{ background: '#0a0a0c' }}>
           <div className="text-center relative z-10">
             <p className="text-white text-2xl font-bold mb-2">Ühendamine serveriga...</p>
-            <p className="text-white/60 text-sm animate-pulse">[Socket] Backend URL: http://localhost:3001</p>
+            <p className="text-white/60 text-sm animate-pulse">[Socket] Backend URL: {backendUrl}</p>
           </div>
         </div>
       );
