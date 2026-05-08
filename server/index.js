@@ -374,6 +374,10 @@ function r2MoveToVote(roomCode) {
   });
   room.expectedVoters = voters.length;
   emitState(roomCode);
+  if (room.expectedVoters === 0) {
+    r2FinishVoting(roomCode);
+    return;
+  }
   startTimer(roomCode, 15, function() { r2FinishVoting(roomCode); });
   voters.filter(function(p) { return p.isBot; }).forEach(function(bot) {
     var delay = 1000 + Math.random() * 3000;
@@ -381,8 +385,7 @@ function r2MoveToVote(roomCode) {
       if (!rooms[roomCode] || room.roundPhase !== 'vote') return;
       if (room.votedPlayers.indexOf(bot.id) !== -1) return;
       var chosen = pickRandom(room.answers);
-      if (!chosen) return;
-      room.votes[chosen.playerId] = (room.votes[chosen.playerId] || 0) + 1;
+      if (chosen) room.votes[chosen.playerId] = (room.votes[chosen.playerId] || 0) + 1;
       room.votedPlayers.push(bot.id);
       io.to(roomCode).emit('vote-count', { votedCount: room.votedPlayers.length, expectedVoters: room.expectedVoters });
       if (room.votedPlayers.length >= room.expectedVoters) r2FinishVoting(roomCode);
@@ -536,9 +539,10 @@ function scheduleBotVotes(roomCode, allPlayers) {
       if (!rooms[roomCode] || room.roundPhase !== 'vote') return;
       if (room.votedPlayers.indexOf(bot.id) !== -1) return;
       var others = room.answers.filter(function(a) { return a.playerId !== bot.id; });
-      if (others.length === 0) return;
-      var chosen = pickRandom(others);
-      room.votes[chosen.playerId] = (room.votes[chosen.playerId] || 0) + 1;
+      if (others.length > 0) {
+        var chosen = pickRandom(others);
+        room.votes[chosen.playerId] = (room.votes[chosen.playerId] || 0) + 1;
+      }
       room.votedPlayers.push(bot.id);
       io.to(roomCode).emit('vote-count', { votedCount: room.votedPlayers.length, expectedVoters: room.expectedVoters });
       if (room.votedPlayers.length >= room.expectedVoters) {
