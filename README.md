@@ -37,7 +37,7 @@ Vaikimisi aadressid:
 npm --prefix client run build
 ```
 
-Build tekib kausta `client/dist/`. Seda kausta ei hoita Git'is, sest hosting ehitab selle ise.
+Build tekib repo juurkausta `dist/`. Seda kausta ei hoita Git'is, sest hosting ehitab selle ise.
 
 Kui frontend ja backend on eri domeenidel, määra frontendi buildi ajal backend URL:
 
@@ -100,5 +100,5 @@ H2katon/
 ## Märkused
 
 - Ruumid ja mänguseis elavad serveri mälus. Serveri restart kustutab aktiivsed ruumid.
-- `node_modules/`, `client/dist/`, logid ja pid-failid on ignoreeritud.
+- `node_modules/`, `dist/`, logid ja pid-failid on ignoreeritud.
 - `render.yaml` ei ole repos vajalik, kui Renderi build ja start käsud on dashboardis seadistatud.
